@@ -5,7 +5,7 @@ export default async function Home() {
   // Simulate fetching data on the server
   const serverData = {
     hero: {
-      badge: "Coming Summer 2025",
+      badge: "Coming February 2026",
       title: "Vibe Olympics",
       subtitle: "Where creators compete.",
       description:

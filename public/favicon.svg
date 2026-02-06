@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#000000"/>
+  <!-- Olympic rings: 5 interlocking rings in a classic arrangement -->
+  <!-- Top row: 3 rings -->
+  <circle cx="9.5" cy="13" r="3.8" fill="none" stroke="white" stroke-width="1.3"/>
+  <circle cx="16" cy="13" r="3.8" fill="none" stroke="white" stroke-width="1.3"/>
+  <circle cx="22.5" cy="13" r="3.8" fill="none" stroke="white" stroke-width="1.3"/>
+  <!-- Bottom row: 2 rings (offset between top rings) -->
+  <circle cx="12.75" cy="17.5" r="3.8" fill="none" stroke="white" stroke-width="1.3"/>
+  <circle cx="19.25" cy="17.5" r="3.8" fill="none" stroke="white" stroke-width="1.3"/>
+</svg>
