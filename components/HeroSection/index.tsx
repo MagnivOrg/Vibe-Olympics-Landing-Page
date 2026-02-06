@@ -174,7 +174,16 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
             <Button variant="secondary" onClick={() => setApplyOpen(false)}>
               Close
             </Button>
-            <Button variant="accent" onClick={() => setApplyOpen(false)}>
+            <Button
+              variant="accent"
+              onClick={() => {
+                window.open(
+                  "https://partiful.com/e/ZgwBhhmfjWTBjqXcs9dS?c=aejCpAmk",
+                  "_blank",
+                );
+                setApplyOpen(false);
+              }}
+            >
               Join Waitlist
             </Button>
           </DialogFooter>
