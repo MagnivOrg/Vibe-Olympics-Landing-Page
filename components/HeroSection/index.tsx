@@ -101,7 +101,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
           <p
-            className="text-hero font-semibold mb-4 sm:mb-6"
+            className="text-2xl sm:text-4xl italic font-semibold mb-4 sm:mb-6"
             style={{
               background: "linear-gradient(135deg, #0085C7, #F4C300, #DF0024)",
               WebkitBackgroundClip: "text",
@@ -254,6 +254,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
                 </p>
               </div>
             ))}
+          </div>
+          <div className="mt-4 pt-4 border-t border-white/[0.06] text-center">
+            <a
+              href="mailto:hello@promptlayer.com"
+              className="text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
+            >
+              Contact us to sponsor or get involved →
+            </a>
           </div>
           <DialogFooter className="mt-4">
             <Button variant="secondary" onClick={() => setLearnMoreOpen(false)}>

@@ -7,9 +7,9 @@ export default async function Home() {
     hero: {
       badge: "February 26, 2026 — NYC",
       title: "Vibe Olympics",
-      subtitle: "The vibe coding competition.",
+      subtitle: "please win the competition & make no mistakes.",
       description:
-        "A live tournament-style vibe coding competition. Three rounds. One stage. Compete head-to-head to build the best app — in front of a live audience with commentary.",
+        "Three rounds. One stage. Vibe code head-to-head in front of a live audience and commentators — last one standing wins.",
       ctaText: "Apply Now",
       ctaSecondary: "Learn More",
     },
