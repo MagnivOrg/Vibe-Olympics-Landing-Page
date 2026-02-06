@@ -4,6 +4,11 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
 
+/**
+ * Deduplicated & trimmed emoji palette.
+ * Keeping ~100 unique entries is plenty for visual variety while reducing
+ * the static array cost and keeping the module lighter.
+ */
 const VIBE_EMOJIS = [
   "✨",
   "🎨",
@@ -51,254 +56,60 @@ const VIBE_EMOJIS = [
   "🥇",
   "🏅",
   "👑",
-  "💝",
   "💖",
   "💗",
-  "💓",
   "💞",
-  "💕",
-  "💘",
   "❤️",
   "🧡",
   "💛",
   "💚",
   "💙",
   "💜",
-  "🤎",
-  "🖤",
-  "🤍",
-  "☮️",
-  "☯️",
-  "🕉️",
-  "☪️",
-  "🔯",
-  "🪬",
-  "🧿",
   "🌀",
-  "🎐",
-  "🎏",
-  "🎎",
-  "🧘",
   "🕺",
   "💃",
   "🪩",
   "🎼",
   "🎧",
-  "🎛️",
-  "🎚️",
-  "📻",
   "🔮",
   "🪄",
   "🌌",
-  "🌃",
-  "🌆",
-  "🌇",
-  "🌉",
-  "🗼",
-  "🎢",
-  "🎡",
-  "🎠",
-  "⛱️",
-  "🏖️",
-  "🏝️",
   "🦚",
   "🦜",
   "🦩",
-  "🐠",
-  "🐟",
   "🐬",
   "🐳",
   "🦄",
   "🐉",
-  "🦖",
-  "🍇",
   "🍉",
   "🍊",
   "🍋",
-  "🍌",
   "🍍",
-  "🥭",
   "🍑",
   "🍒",
   "🍓",
-  "🫐",
-  "🥝",
-  "🍿",
   "🍭",
-  "🍬",
-  "🍫",
   "🍩",
-  "🍪",
   "🧁",
-  "🍰",
   "🎂",
-  "🍨",
   "🍦",
-  "🍧",
-  "🥤",
-  "🧃",
-  "🧋",
-  "🍹",
-  "🍸",
   "☕",
-  "🍵",
-  "🧉",
   "🥂",
   "🍾",
   "🏄",
   "🏂",
-  "🪂",
-  "🧗",
-  "🚴",
   "🛹",
-  "🛼",
-  "✈️",
-  "🚁",
   "🛸",
-  "🛶",
   "⛵",
-  "🚤",
-  "⛰️",
-  "🏔️",
-  "🗻",
-  "🏕️",
-  "⛺",
-  "🏞️",
-  "🌋",
-  "💀",
-  "👻",
-  "🤡",
-  "🤠",
   "🥳",
   "🤩",
-  "😭",
   "😎",
   "🤪",
   "🫠",
-  "🫡",
-  "🫣",
-  "🫢",
-  "🫥",
-  "🥺",
-  "🤌",
-  "🫰",
-  "🤙",
-  "🫶",
-  "💅",
-  "🧠",
-  "👁️",
-  "🦷",
-  "🦴",
-  "👄",
-  "🧃",
-  "🌮",
-  "🌯",
-  "🥑",
-  "🥤",
-  "🧋",
   "💯",
-  "🔥",
   "⭐",
-  "🌠",
   "💥",
-  "🎇",
   "🎆",
-  "🌤️",
-  "⛅",
-  "🌥️",
-  "☁️",
-  "🌦️",
-  "🌧️",
-  "⛈️",
-  "🌩️",
-  "🌨️",
-  "❄️",
-  "⛄",
-  "☃️",
-  "🌬️",
-  "💨",
-  "🌪️",
-  "🌫️",
-  "🌍",
-  "🌎",
-  "🌏",
-  "🌐",
-  "🗾",
-  "🧭",
-  "🏔️",
-  "⛰️",
-  "🌋",
-  "🗻",
-  "🏕️",
-  "🏖️",
-  "🏜️",
-  "🏝️",
-  "🏞️",
-  "🏟️",
-  "🏛️",
-  "🏗️",
-  "🧱",
-  "🪨",
-  "🪵",
-  "🛖",
-  "🏘️",
-  "🏚️",
-  "🏠",
-  "🏡",
-  "🏢",
-  "🏣",
-  "🏤",
-  "🏥",
-  "🏦",
-  "🏨",
-  "🏩",
-  "🏪",
-  "🏫",
-  "🏬",
-  "🏭",
-  "🏯",
-  "🏰",
-  "💒",
-  "🗼",
-  "🗽",
-  "⛪",
-  "🕌",
-  "🛕",
-  "🕍",
-  "⛩️",
-  "🕋",
-  "⛲",
-  "⛺",
-  "🌁",
-  "🌃",
-  "🏙️",
-  "🌄",
-  "🌅",
-  "🌆",
-  "🌇",
-  "🌉",
-  "♨️",
-  "🎠",
-  "🎡",
-  "🎢",
-  "💈",
-  "🎪",
-  "🚂",
-  "🚃",
-  "🚄",
-  "🚅",
-  "🚆",
-  "🚇",
-  "🚈",
-  "🚉",
-  "🚊",
-  "🚝",
-  "🚞",
-  "🚋",
-  "🚌",
-  "🚍",
-  "🚎",
-  "🚐",
 ];
 
 interface ParticleData {
@@ -311,13 +122,24 @@ interface ParticleData {
   size: number;
   rotation: number;
   rotationSpeed: number;
-  opacity: number;
+  /** Final resting opacity once fully entered. */
+  targetOpacity: number;
   side: "left" | "right";
   phase: number;
   wobbleSpeed: number;
   wobbleAmpX: number;
   wobbleAmpY: number;
   floatSpeed: number;
+
+  // ── Entrance animation state ──
+  /** 0 → 1 progress through the entrance animation. */
+  entranceProgress: number;
+  /** Normalised-frame delay before this particle begins its entrance. */
+  entranceDelay: number;
+  /** Normalised-frame duration of the entrance tween. */
+  entranceDuration: number;
+  /** Cumulative normalised frames elapsed since the particle was created. */
+  age: number;
 }
 
 // ============ TWEAK THESE VALUES ============
@@ -339,16 +161,35 @@ const EASE_BACK_SPEED = 0.08;
 // Base upward float speed (vh per normalised frame)
 const FLOAT_SPEED_BASE = 0.028;
 const FLOAT_SPEED_VARIANCE = 0.012;
+
+// ── Entrance tuning ──
+// Total stagger window (normalised frames). Particles are randomly assigned
+// a delay within [0, ENTRANCE_STAGGER_WINDOW]. At 60 fps one normalised
+// frame ≈ 16.67 ms, so 90 frames ≈ 1.5 s total stagger spread.
+const ENTRANCE_STAGGER_WINDOW = 90;
+// How long each individual particle takes to fully fade/scale in.
+// ~48 frames ≈ 0.8 s at 60 fps.
+const ENTRANCE_DURATION = 48;
+// How many vh the particle drifts upward from below its rest during entrance.
+const ENTRANCE_DRIFT_VH = 6;
+// Starting scale factor (grows to 1.0).
+const ENTRANCE_SCALE_START = 0.45;
 // ============================================
 
-const createParticleData = (id: number, initialY?: number): ParticleData => {
+/** Deceleration ease-out: `1 - (1 - t)^3` */
+const cubicOut = (t: number): number => {
+  const inv = 1 - t;
+  return 1 - inv * inv * inv;
+};
+
+const createParticleData = (id: number, _initialY?: number): ParticleData => {
   const side: "left" | "right" = id % 2 === 0 ? "left" : "right";
   const baseX =
     side === "left"
       ? Math.random() * COLUMN_WIDTH_PERCENT
       : 100 - COLUMN_WIDTH_PERCENT + Math.random() * COLUMN_WIDTH_PERCENT;
 
-  const yPos = initialY ?? Math.random() * 100;
+  const yPos = _initialY ?? Math.random() * 100;
 
   return {
     x: baseX,
@@ -360,13 +201,20 @@ const createParticleData = (id: number, initialY?: number): ParticleData => {
     size: 16 + Math.random() * 14,
     rotation: Math.random() * 360,
     rotationSpeed: (Math.random() - 0.5) * 0.15,
-    opacity: 0.3 + Math.random() * 0.5,
+    targetOpacity: 0.3 + Math.random() * 0.5,
     side,
     phase: Math.random() * Math.PI * 2,
     wobbleSpeed: 0.0006 + Math.random() * 0.0012,
     wobbleAmpX: 1.0 + Math.random() * 2.0,
     wobbleAmpY: 0.5 + Math.random() * 1.0,
     floatSpeed: FLOAT_SPEED_BASE + (Math.random() - 0.5) * FLOAT_SPEED_VARIANCE,
+
+    // Entrance state — each particle gets a random delay so they don't
+    // all pop in at the same frame.
+    entranceProgress: 0,
+    entranceDelay: Math.random() * ENTRANCE_STAGGER_WINDOW,
+    entranceDuration: ENTRANCE_DURATION,
+    age: 0,
   };
 };
 
@@ -406,8 +254,9 @@ export const FloatingEmojis = () => {
       el.style.left = `${data.x}vw`;
       el.style.top = `${data.y}vh`;
       el.style.fontSize = `${data.size}px`;
-      el.style.transform = `rotate(${data.rotation}deg)`;
-      el.style.opacity = String(data.opacity);
+      // Start invisible & scaled down — the animation loop will ease them in.
+      el.style.opacity = "0";
+      el.style.transform = `rotate(${data.rotation}deg) scale(${ENTRANCE_SCALE_START})`;
       el.textContent =
         VIBE_EMOJIS[Math.floor(Math.random() * VIBE_EMOJIS.length)];
 
@@ -441,6 +290,26 @@ export const FloatingEmojis = () => {
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
+
+        // ── 0. Advance entrance animation ──
+        p.age += deltaTime;
+
+        if (p.entranceProgress < 1) {
+          // Haven't started yet (still in stagger delay)?
+          if (p.age < p.entranceDelay) {
+            // Particle stays invisible — skip expensive position work.
+            continue;
+          }
+
+          // How far through the entrance tween are we?
+          const rawProgress = Math.min(
+            (p.age - p.entranceDelay) / p.entranceDuration,
+            1,
+          );
+          p.entranceProgress = cubicOut(rawProgress);
+        }
+
+        const ep = p.entranceProgress; // 0 → 1
 
         // ── 1. Advance the rest position (continuous upward float) ──
         p.restY -= p.floatSpeed * deltaTime;
@@ -507,11 +376,23 @@ export const FloatingEmojis = () => {
         // ── 7. Smooth rotation ──
         p.rotation += p.rotationSpeed * deltaTime;
 
-        // ── 8. Write to DOM ──
+        // ── 8. Entrance modifiers ──
+        // Drift: during entrance the particle rises from slightly below its
+        // natural position, blending the offset out as ep approaches 1.
+        const driftOffset = (1 - ep) * ENTRANCE_DRIFT_VH;
+
+        // Scale: grows from ENTRANCE_SCALE_START to 1.0
+        const scale = ENTRANCE_SCALE_START + (1 - ENTRANCE_SCALE_START) * ep;
+
+        // Opacity: ramps from 0 to targetOpacity
+        const opacity = p.targetOpacity * ep;
+
+        // ── 9. Write to DOM ──
         const el = els[i];
         el.style.left = `${p.x}vw`;
-        el.style.top = `${p.y}vh`;
-        el.style.transform = `rotate(${p.rotation}deg)`;
+        el.style.top = `${p.y + driftOffset}vh`;
+        el.style.transform = `rotate(${p.rotation}deg) scale(${scale})`;
+        el.style.opacity = String(opacity);
       }
 
       animationRef.current = requestAnimationFrame(animate);
@@ -582,6 +463,7 @@ export const FloatingEmojis = () => {
     <div
       ref={containerRef}
       className="fixed inset-0 pointer-events-none z-10 overflow-hidden"
+      style={{ contain: "layout style paint size" }}
     />
   );
 };

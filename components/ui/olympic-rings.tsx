@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface OlympicRingsProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -88,7 +88,7 @@ export const OlympicRings = ({
         {rings
           .sort((a, b) => a.zIndex - b.zIndex)
           .map((ringData, index) => (
-            <motion.circle
+            <m.circle
               key={`ring-${index}`}
               cx={ringData.cx}
               cy={ringData.cy}
@@ -109,7 +109,7 @@ export const OlympicRings = ({
       </svg>
 
       {animated && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.4 }}
           transition={{ duration: 1, delay: 0.5 }}

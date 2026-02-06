@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useState } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
@@ -41,17 +41,17 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 
       <div className="relative max-w-6xl mx-auto px-6 text-center z-10">
         {/* Olympic Rings — Central Element (smaller on mobile) */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="flex justify-center mb-6 sm:mb-10"
         >
           <OlympicRings size={isTouch ? "md" : "lg"} animated />
-        </motion.div>
+        </m.div>
 
         {/* Badge */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -63,10 +63,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               {data.badge}
             </span>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Title */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -74,10 +74,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           <h1 className="text-display font-bold text-foreground mb-3 sm:mb-4 leading-[0.95] tracking-tight">
             {data.title}
           </h1>
-        </motion.div>
+        </m.div>
 
         {/* Subtitle with gradient */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -93,10 +93,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           >
             {data.subtitle}
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Description */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -104,10 +104,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed font-light">
             {data.description}
           </p>
-        </motion.div>
+        </m.div>
 
         {/* CTA Buttons */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -129,10 +129,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           >
             {data.ctaSecondary}
           </Button>
-        </motion.div>
+        </m.div>
 
         {/* Bottom sponsors */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
@@ -143,7 +143,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
             {["Vercel", "NVIDIA", "OpenAI"].map((company, index) => (
-              <motion.div
+              <m.div
                 key={company}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -155,10 +155,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
                 className="text-base font-medium text-white/25 hover:text-white/60 transition-colors duration-300 cursor-pointer"
               >
                 {company}
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Apply Dialog */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useSpring, useTransform } from "framer-motion";
+import { m, useSpring, useTransform } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
@@ -84,29 +84,31 @@ export const InteractiveBackground = () => {
     <div
       ref={containerRef}
       className="absolute inset-0 overflow-hidden"
-      style={{ isolation: "isolate" }}
+      style={{ isolation: "isolate", contain: "layout style paint" }}
     >
       {/* Base grid background */}
       <div className="absolute inset-0 grid-bg opacity-20" />
 
       {/* Interactive gradient orbs with parallax
           Mobile: smaller sizes + reduced blur for GPU performance
-          Desktop: full-size orbs with heavy blur */}
-      <motion.div
+          Desktop: full-size orbs with heavy blur
+          CSS containment via `contain: strict` isolates each orb's
+          compositing layer so blur repaints don't cascade. */}
+      <m.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.12, scale: 1 }}
         transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
         style={isTouch ? undefined : { x: orbOffset1X, y: orbOffset1Y }}
         className="absolute top-1/3 left-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#0085C7] rounded-full blur-[80px] md:blur-[150px] will-change-transform"
       />
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.12, scale: 1 }}
         transition={{ duration: 2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         style={isTouch ? undefined : { x: orbOffset2X, y: orbOffset2Y }}
         className="absolute top-1/3 right-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#DF0024] rounded-full blur-[80px] md:blur-[150px] will-change-transform"
       />
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -118,13 +120,14 @@ export const InteractiveBackground = () => {
       {!isTouch && (
         <>
           {/* Subtle cursor-following ambient glow */}
-          <motion.div
+          <m.div
             className="absolute pointer-events-none will-change-transform"
             style={{
               left: glowX,
               top: glowY,
               translateX: "-50%",
               translateY: "-50%",
+              contain: "layout style paint",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: showCursorGlow ? 1 : 0 }}
@@ -138,16 +141,17 @@ export const InteractiveBackground = () => {
                   "radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 40%, transparent 70%)",
               }}
             />
-          </motion.div>
+          </m.div>
 
           {/* Secondary subtle highlight ring */}
-          <motion.div
+          <m.div
             className="absolute pointer-events-none will-change-transform"
             style={{
               left: glowX,
               top: glowY,
               translateX: "-50%",
               translateY: "-50%",
+              contain: "layout style paint",
             }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{
@@ -163,16 +167,17 @@ export const InteractiveBackground = () => {
                   "radial-gradient(circle, transparent 0%, transparent 30%, rgba(255,255,255,0.008) 50%, transparent 70%)",
               }}
             />
-          </motion.div>
+          </m.div>
 
           {/* Ambient color tint that follows cursor */}
-          <motion.div
+          <m.div
             className="absolute pointer-events-none will-change-transform mix-blend-soft-light"
             style={{
               left: glowX,
               top: glowY,
               translateX: "-50%",
               translateY: "-50%",
+              contain: "layout style paint",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: showCursorGlow ? 1 : 0 }}
@@ -185,7 +190,7 @@ export const InteractiveBackground = () => {
                   "radial-gradient(circle, rgba(0,133,199,0.08) 0%, rgba(244,195,0,0.05) 50%, transparent 70%)",
               }}
             />
-          </motion.div>
+          </m.div>
         </>
       )}
 

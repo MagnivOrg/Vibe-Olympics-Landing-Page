@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { m, useMotionValue, useSpring } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
@@ -50,7 +50,7 @@ const TrailParticle = ({
   const shadowOpacity = 0.15 - index * 0.03;
 
   return (
-    <motion.div
+    <m.div
       className="absolute"
       style={{
         x,
@@ -59,7 +59,7 @@ const TrailParticle = ({
         translateY: "-50%",
       }}
     >
-      <motion.div
+      <m.div
         className="rounded-full"
         style={{
           width: `${size}px`,
@@ -69,7 +69,7 @@ const TrailParticle = ({
           boxShadow: `0 0 ${shadowSpread}px rgba(255,255,255,${shadowOpacity})`,
         }}
       />
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -196,7 +196,7 @@ const LiquidGlassCursorInner = () => {
   ]);
 
   return (
-    <motion.div
+    <m.div
       ref={cursorRef}
       className="fixed top-0 left-0 pointer-events-none z-[9999]"
       initial={{ opacity: 0 }}
@@ -204,7 +204,7 @@ const LiquidGlassCursorInner = () => {
       transition={{ duration: 0.3 }}
     >
       {/* Outermost blob layer — very soft trailing glow */}
-      <motion.div
+      <m.div
         className="absolute"
         style={{
           x: blobX,
@@ -213,7 +213,7 @@ const LiquidGlassCursorInner = () => {
           translateY: "-50%",
         }}
       >
-        <motion.div
+        <m.div
           className="w-48 h-48 rounded-full"
           style={{
             scale,
@@ -222,10 +222,10 @@ const LiquidGlassCursorInner = () => {
             filter: "blur(20px)",
           }}
         />
-      </motion.div>
+      </m.div>
 
       {/* Outer trailing glow — creates the liquid feel */}
-      <motion.div
+      <m.div
         className="absolute"
         style={{
           x: trailX,
@@ -234,7 +234,7 @@ const LiquidGlassCursorInner = () => {
           translateY: "-50%",
         }}
       >
-        <motion.div
+        <m.div
           className="w-32 h-32 rounded-full"
           style={{
             scale,
@@ -243,10 +243,10 @@ const LiquidGlassCursorInner = () => {
             filter: "blur(8px)",
           }}
         />
-      </motion.div>
+      </m.div>
 
       {/* Main glass cursor blob */}
-      <motion.div
+      <m.div
         className="absolute"
         style={{
           x: smoothX,
@@ -255,13 +255,13 @@ const LiquidGlassCursorInner = () => {
           translateY: "-50%",
         }}
       >
-        <motion.div
+        <m.div
           className="relative"
           style={{ scale }}
           transition={{ type: "spring", damping: 18, stiffness: 300 }}
         >
           {/* Main glass blob container */}
-          <motion.div
+          <m.div
             className="w-20 h-20 rounded-full relative overflow-hidden"
             animate={{
               borderColor: cursorState.isOverInteractive
@@ -341,10 +341,10 @@ const LiquidGlassCursorInner = () => {
                 filter: "blur(2px)",
               }}
             />
-          </motion.div>
+          </m.div>
 
           {/* Center dot indicator */}
-          <motion.div
+          <m.div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{ scale: innerScale }}
           >
@@ -356,16 +356,16 @@ const LiquidGlassCursorInner = () => {
                 boxShadow: "0 0 12px rgba(255,255,255,0.6)",
               }}
             />
-          </motion.div>
-        </motion.div>
-      </motion.div>
+          </m.div>
+        </m.div>
+      </m.div>
 
       {/* Liquid trail particles — each is its own component to keep hooks unconditional */}
       <TrailParticle index={0} cursorX={cursorX} cursorY={cursorY} />
       <TrailParticle index={1} cursorX={cursorX} cursorY={cursorY} />
       <TrailParticle index={2} cursorX={cursorX} cursorY={cursorY} />
       <TrailParticle index={3} cursorX={cursorX} cursorY={cursorY} />
-    </motion.div>
+    </m.div>
   );
 };
 
