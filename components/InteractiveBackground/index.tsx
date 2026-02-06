@@ -5,9 +5,125 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
 
+declare global {
+  interface Window {
+    YT: typeof YT;
+    onYouTubeIframeAPIReady: (() => void) | undefined;
+  }
+}
+
+const YOUTUBE_VIDEO_ID = "c-sFWDzvgyw";
+const LOOP_BEFORE_END_SECONDS = 20;
+const TIME_CHECK_INTERVAL_MS = 1000;
+const IFRAME_ID = "yt-bg-player";
+
 // Spring configuration for Apple-like fluid motion
 const SPRING_CONFIG = { damping: 25, stiffness: 150, mass: 0.5 };
 const SLOW_SPRING_CONFIG = { damping: 40, stiffness: 90, mass: 1 };
+
+/**
+ * Loads the YouTube IFrame API script once, then resolves.
+ * Subsequent calls return the same promise.
+ */
+let ytApiPromise: Promise<void> | null = null;
+function loadYouTubeApi(): Promise<void> {
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise<void>((resolve) => {
+    if (typeof window !== "undefined" && window.YT?.Player) {
+      resolve();
+      return;
+    }
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      prev?.();
+      resolve();
+    };
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+  });
+  return ytApiPromise;
+}
+
+const YouTubeBackground = ({ isMounted }: { isMounted: boolean }) => {
+  const playerRef = useRef<YT.Player | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    let cancelled = false;
+
+    const init = async () => {
+      await loadYouTubeApi();
+      if (cancelled) return;
+
+      // Wrap the existing iframe rendered in JSX with the YT API
+      const player = new YT.Player(IFRAME_ID, {
+        events: {
+          onReady: () => {
+            if (cancelled) return;
+            playerRef.current = player;
+
+            // Poll current time to loop 20s before end
+            intervalRef.current = setInterval(() => {
+              try {
+                if (!playerRef.current) return;
+                const duration = playerRef.current.getDuration();
+                const currentTime = playerRef.current.getCurrentTime();
+                if (
+                  duration > 0 &&
+                  currentTime >= duration - LOOP_BEFORE_END_SECONDS
+                ) {
+                  playerRef.current.seekTo(0, true);
+                }
+              } catch {
+                // Player might not be ready yet
+              }
+            }, TIME_CHECK_INTERVAL_MS);
+          },
+        },
+      });
+    };
+
+    init();
+
+    return () => {
+      cancelled = true;
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      playerRef.current = null;
+    };
+  }, [isMounted]);
+
+  return (
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none"
+      style={{
+        opacity: isMounted ? 1 : 0,
+        transition: "opacity 1.5s ease-in-out",
+      }}
+    >
+      {isMounted && (
+        <iframe
+          id={IFRAME_ID}
+          src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_VIDEO_ID}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&fs=0&iv_load_policy=3&enablejsapi=1`}
+          title="Background video"
+          allow="autoplay; encrypted-media"
+          allowFullScreen={false}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0 pointer-events-none scale-[1.4]"
+          style={{
+            aspectRatio: "16/9",
+            width: "177.78vh",
+            minWidth: "100%",
+            minHeight: "100%",
+          }}
+        />
+      )}
+      {/* Dark overlay to keep text readable */}
+      <div className="absolute inset-0 bg-black/60" />
+    </div>
+  );
+};
 
 export const InteractiveBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,31 +208,7 @@ export const InteractiveBackground = () => {
       style={{ isolation: "isolate", contain: "layout style paint" }}
     >
       {/* YouTube video background — rendered only after mount to avoid hydration mismatch */}
-      <div
-        className="absolute inset-0 overflow-hidden pointer-events-none"
-        style={{
-          opacity: isMounted ? 1 : 0,
-          transition: "opacity 1.5s ease-in-out",
-        }}
-      >
-        {isMounted && (
-          <iframe
-            src="https://www.youtube.com/embed/c-sFWDzvgyw?autoplay=1&mute=1&loop=1&playlist=c-sFWDzvgyw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&fs=0&iv_load_policy=3"
-            title="Background video"
-            allow="autoplay; encrypted-media"
-            allowFullScreen={false}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0 pointer-events-none scale-[1.4]"
-            style={{
-              aspectRatio: "16/9",
-              width: "177.78vh",
-              minWidth: "100%",
-              minHeight: "100%",
-            }}
-          />
-        )}
-        {/* Dark overlay to keep text readable */}
-        <div className="absolute inset-0 bg-black/60" />
-      </div>
+      <YouTubeBackground isMounted={isMounted} />
 
       {/* Base grid background */}
       <div className="absolute inset-0 grid-bg opacity-20" />
