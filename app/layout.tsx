@@ -6,7 +6,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Vibe Olympics",
-  description: "Where creators compete",
+  description: "The vibe coding competition — February 26, 2026 in NYC",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Vibe Olympics",
-    description: "Where creators compete",
+    description: "The vibe coding competition — February 26, 2026 in NYC",
     siteName: "Vibe Olympics",
     type: "website",
     locale: "en_US",
@@ -30,14 +30,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 2004,
         height: 1144,
-        alt: "Vibe Olympics — Where creators compete",
+        alt: "Vibe Olympics — The vibe coding competition",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Vibe Olympics",
-    description: "Where creators compete",
+    description: "The vibe coding competition — February 26, 2026 in NYC",
     images: ["/twitter-image.png"],
   },
   appleWebApp: {
