@@ -5,11 +5,11 @@ export default async function Home() {
   // Simulate fetching data on the server
   const serverData = {
     hero: {
-      badge: "Coming February 2026",
+      badge: "February 26, 2026 — NYC",
       title: "Vibe Olympics",
-      subtitle: "Where creators compete.",
+      subtitle: "The vibe coding competition.",
       description:
-        "The ultimate showdown for builders, designers, and dreamers. 48 hours. One winner. Infinite possibilities.",
+        "A live tournament-style vibe coding competition. Three rounds. One stage. Compete head-to-head to build the best app — in front of a live audience with commentary.",
       ctaText: "Apply Now",
       ctaSecondary: "Learn More",
     },
