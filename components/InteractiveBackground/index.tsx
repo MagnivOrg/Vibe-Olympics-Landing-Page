@@ -86,6 +86,25 @@ export const InteractiveBackground = () => {
       className="absolute inset-0 overflow-hidden"
       style={{ isolation: "isolate", contain: "layout style paint" }}
     >
+      {/* YouTube video background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <iframe
+          src="https://www.youtube.com/embed/c-sFWDzvgyw?autoplay=1&mute=0&loop=1&playlist=c-sFWDzvgyw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&fs=0&iv_load_policy=3"
+          title="Background video"
+          allow="autoplay; encrypted-media; loop"
+          allowFullScreen={false}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0 pointer-events-none scale-[1.4]"
+          style={{
+            aspectRatio: "16/9",
+            width: "177.78vh",
+            minWidth: "100%",
+            minHeight: "100%",
+          }}
+        />
+        {/* Dark overlay to keep text readable */}
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+
       {/* Base grid background */}
       <div className="absolute inset-0 grid-bg opacity-20" />
 
