@@ -42,13 +42,17 @@ interface ClientShellProps {
  *    masking any layout shifts or animation stutter.
  *
  * 3. **Deferred decorative layers** — `FloatingEmojis` and `LiquidGlassCursor`
- *    are dynamically imported AND only mounted after the preloader has fully
- *    dismissed (`isDismissed`). This ensures the main thread is free for
- *    the hero content to paint first, then expensive particle systems and
- *    cursor springs initialise once the user is already seeing content.
+ *    are dynamically imported AND only mounted once the preloader starts its
+ *    fade-out (`!isLoading`). This lets them initialise behind the fading
+ *    overlay so they're ready by the time the user sees the content — closing
+ *    the gap between "preloader gone" and "site fully interactive".
+ *
+ * Previously these layers waited until `isDismissed` (after the fade
+ * finished), which added an extra 400-600ms of dead time before
+ * decorative elements appeared. Now the fade itself covers their init.
  */
 export const ClientShell = ({ children }: ClientShellProps) => {
-  const { isLoading, isDismissed } = usePreloader(600);
+  const { isLoading, isDismissed } = usePreloader(400);
 
   return (
     <LazyMotionProvider>
@@ -58,9 +62,10 @@ export const ClientShell = ({ children }: ClientShellProps) => {
           the browser can start painting it in the background. */}
       {children}
 
-      {/* Heavy decorative layers — only mount after preloader is fully gone
-          so their initialisation doesn't compete with the hero paint. */}
-      {isDismissed && (
+      {/* Heavy decorative layers — mount as soon as the preloader starts
+          fading out so their initialisation happens behind the overlay.
+          By the time the fade completes they're already running. */}
+      {!isLoading && (
         <>
           <LiquidGlassCursor />
           <FloatingEmojis />

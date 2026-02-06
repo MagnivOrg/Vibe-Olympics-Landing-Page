@@ -44,7 +44,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="flex justify-center mb-6 sm:mb-10"
         >
           <OlympicRings size={isTouch ? "md" : "lg"} animated />
@@ -54,7 +54,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="mb-4 sm:mb-6 inline-block"
         >
           <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
@@ -69,7 +69,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1 className="text-display font-bold text-foreground mb-3 sm:mb-4 leading-[0.95] tracking-tight">
             {data.title}
@@ -80,7 +80,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
           <p
             className="text-hero font-semibold mb-4 sm:mb-6"
@@ -99,7 +99,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed font-light">
             {data.description}
@@ -110,7 +110,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
         >
           <Button
@@ -135,7 +135,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
           className="mt-8 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.06]"
         >
           <p className="text-xs text-white/30 mb-4 sm:mb-5 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-medium">
@@ -148,8 +148,8 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
-                  duration: 0.6,
-                  delay: 1.4 + index * 0.1,
+                  duration: 0.5,
+                  delay: 0.6 + index * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="text-base font-medium text-white/25 hover:text-white/60 transition-colors duration-300 cursor-pointer"

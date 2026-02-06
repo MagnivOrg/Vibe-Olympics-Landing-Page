@@ -165,8 +165,11 @@ const LiquidGlassCursorInner = () => {
   );
 
   useEffect(() => {
-    // Hide default cursor
-    document.body.style.cursor = "none";
+    // Signal to CSS that the custom cursor is mounted and ready.
+    // The globals.css rule `html[data-custom-cursor] * { cursor: none }` only
+    // activates once this attribute is present, eliminating the gap where
+    // the default cursor was hidden but the custom one hadn't rendered yet.
+    document.documentElement.setAttribute("data-custom-cursor", "");
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     window.addEventListener("mousemove", checkInteractiveElement, {
@@ -178,7 +181,7 @@ const LiquidGlassCursorInner = () => {
     document.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      document.body.style.cursor = "auto";
+      document.documentElement.removeAttribute("data-custom-cursor");
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousemove", checkInteractiveElement);
       window.removeEventListener("mousedown", handleMouseDown);

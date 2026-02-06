@@ -91,8 +91,8 @@ export const Preloader = ({ isLoading, isDismissed }: PreloaderProps) => {
               justify-content: center;
               background-color: #050505;
               will-change: opacity;
-              transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                          visibility 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+              transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                          visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             .preloader-overlay[data-hidden="true"] {
