@@ -320,6 +320,9 @@ const DRIFT_FORCE = 0.003; // Tiny force applied each frame for gentle accelerat
 const DAMPING = 0.998; // Very slight damping to slowly reduce velocity
 const DIRECTION_CHANGE_CHANCE = 0.008; // Low chance to change drift direction
 const UPWARD_BIAS = -0.002; // Slight upward drift tendency
+const CURSOR_INFLUENCE_RADIUS = 25; // vw/vh units - how far cursor affects particles
+const CURSOR_PUSH_STRENGTH = 0.8; // How strongly cursor pushes particles away
+const CURSOR_MAX_VELOCITY = 1.5; // Higher max velocity when pushed by cursor
 // ============================================
 
 const createParticle = (id: number, initialY?: number): Particle => {
@@ -347,6 +350,7 @@ export const FloatingEmojis = () => {
   const [particles, setParticles] = useState<Particle[]>([]);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
+  const mouseRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     // Initialize particles
@@ -356,10 +360,27 @@ export const FloatingEmojis = () => {
     }
     setParticles(initialParticles);
 
+    // Track mouse position
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseRef.current = {
+        x: (e.clientX / window.innerWidth) * 100, // Convert to vw
+        y: (e.clientY / window.innerHeight) * 100, // Convert to vh
+      };
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current = null;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseleave", handleMouseLeave);
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
 
@@ -382,6 +403,26 @@ export const FloatingEmojis = () => {
           let { x, y, vx, vy, rotation, rotationSpeed } = particle;
           const side = particle.id % 2 === 0 ? "left" : "right";
 
+          // Apply cursor repulsion force
+          const mouse = mouseRef.current;
+          let isBeingPushed = false;
+          if (mouse) {
+            const dx = x - mouse.x;
+            const dy = y - mouse.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < CURSOR_INFLUENCE_RADIUS && distance > 0.5) {
+              isBeingPushed = true;
+              // Strong inverse falloff - much stronger when close
+              const falloff = 1 - distance / CURSOR_INFLUENCE_RADIUS;
+              const force = CURSOR_PUSH_STRENGTH * falloff * falloff * falloff;
+
+              // Normalize direction and apply force
+              vx += (dx / distance) * force;
+              vy += (dy / distance) * force;
+            }
+          }
+
           // Apply gentle random drift forces (zero gravity feel)
           if (Math.random() < DIRECTION_CHANGE_CHANCE) {
             vx += (Math.random() - 0.5) * DRIFT_FORCE * 10;
@@ -398,11 +439,12 @@ export const FloatingEmojis = () => {
           vx *= Math.pow(DAMPING, deltaTime);
           vy *= Math.pow(DAMPING, deltaTime);
 
-          // Clamp velocity
+          // Clamp velocity (allow higher when being pushed by cursor)
+          const maxVel = isBeingPushed ? CURSOR_MAX_VELOCITY : MAX_VELOCITY;
           const speed = Math.sqrt(vx * vx + vy * vy);
-          if (speed > MAX_VELOCITY) {
-            vx = (vx / speed) * MAX_VELOCITY;
-            vy = (vy / speed) * MAX_VELOCITY;
+          if (speed > maxVel) {
+            vx = (vx / speed) * maxVel;
+            vy = (vy / speed) * maxVel;
           }
 
           // Update position
