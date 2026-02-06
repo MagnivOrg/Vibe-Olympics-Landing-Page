@@ -10,6 +10,7 @@
 
     html {
         scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
     }
 
     body {
@@ -18,6 +19,7 @@
             "Inter", sans-serif;
         background-color: #050505;
         color: #ffffff;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -154,20 +156,51 @@
     color: white;
 }
 
-/* Hide default cursor globally when custom cursor is active */
-* {
-    cursor: none !important;
+/*
+ * Hide the default cursor ONLY on devices that have a fine pointer (mouse).
+ * Touch / mobile devices keep their native cursor & touch behaviour.
+ */
+@media (hover: hover) and (pointer: fine) {
+    * {
+        cursor: none !important;
+    }
+
+    /* Ensure interactive elements still show pointer behavior for accessibility */
+    a,
+    button,
+    [role="button"],
+    input,
+    textarea,
+    select,
+    [data-interactive] {
+        cursor: none !important;
+    }
 }
 
-/* Ensure interactive elements still show pointer behavior for accessibility */
-a,
-button,
-[role="button"],
-input,
-textarea,
-select,
-[data-interactive] {
-    cursor: none !important;
+/*
+ * Mobile-specific touch optimisations.
+ * Disable tap highlight and ensure smooth touch scrolling.
+ */
+@media (hover: none), (pointer: coarse) {
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Let touch devices keep normal cursor fallback */
+    a,
+    button,
+    [role="button"],
+    input,
+    textarea,
+    select,
+    [data-interactive] {
+        cursor: pointer !important;
+    }
+
+    /* Reduce backdrop-blur intensity on mobile GPUs */
+    .backdrop-blur-heavy {
+        backdrop-filter: blur(20px);
+    }
 }
 
 /* Noise texture overlay */
@@ -182,4 +215,12 @@ select,
     opacity: 0.015;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     pointer-events: none;
+}
+
+/* Reduce noise overlay cost on mobile — fewer octaves are imperceptible on small screens */
+@media (hover: none), (pointer: coarse) {
+    .noise::before {
+        opacity: 0.008;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
 }

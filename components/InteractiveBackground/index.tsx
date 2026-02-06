@@ -3,26 +3,24 @@
 import { motion, useSpring, useTransform } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-interface MousePosition {
-  x: number;
-  y: number;
-}
+import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
+
+// Spring configuration for Apple-like fluid motion
+const SPRING_CONFIG = { damping: 25, stiffness: 150, mass: 0.5 };
+const SLOW_SPRING_CONFIG = { damping: 40, stiffness: 90, mass: 1 };
 
 export const InteractiveBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
-
-  // Spring configuration for Apple-like fluid motion
-  const springConfig = { damping: 25, stiffness: 150, mass: 0.5 };
-  const slowSpringConfig = { damping: 40, stiffness: 90, mass: 1 };
+  const isTouch = useIsTouchDevice();
 
   // Mouse position with spring physics
-  const mouseX = useSpring(0.5, springConfig);
-  const mouseY = useSpring(0.5, springConfig);
+  const mouseX = useSpring(0.5, SPRING_CONFIG);
+  const mouseY = useSpring(0.5, SPRING_CONFIG);
 
   // Slower springs for parallax layers
-  const slowMouseX = useSpring(0.5, slowSpringConfig);
-  const slowMouseY = useSpring(0.5, slowSpringConfig);
+  const slowMouseX = useSpring(0.5, SLOW_SPRING_CONFIG);
+  const slowMouseY = useSpring(0.5, SLOW_SPRING_CONFIG);
 
   // Transform mouse position to parallax offsets
   const orbOffset1X = useTransform(slowMouseX, [0, 1], [-30, 30]);
@@ -49,7 +47,7 @@ export const InteractiveBackground = () => {
       slowMouseX.set(x);
       slowMouseY.set(y);
     },
-    [mouseX, mouseY, slowMouseX, slowMouseY]
+    [mouseX, mouseY, slowMouseX, slowMouseY],
   );
 
   const handleMouseEnter = useCallback(() => {
@@ -67,9 +65,9 @@ export const InteractiveBackground = () => {
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || isTouch) return;
 
-    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mousemove", handleMouseMove, { passive: true });
     container.addEventListener("mouseenter", handleMouseEnter);
     container.addEventListener("mouseleave", handleMouseLeave);
 
@@ -78,7 +76,9 @@ export const InteractiveBackground = () => {
       container.removeEventListener("mouseenter", handleMouseEnter);
       container.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [handleMouseMove, handleMouseEnter, handleMouseLeave]);
+  }, [handleMouseMove, handleMouseEnter, handleMouseLeave, isTouch]);
+
+  const showCursorGlow = !isTouch && isHovering;
 
   return (
     <div
@@ -89,98 +89,105 @@ export const InteractiveBackground = () => {
       {/* Base grid background */}
       <div className="absolute inset-0 grid-bg opacity-20" />
 
-      {/* Interactive gradient orbs with parallax */}
+      {/* Interactive gradient orbs with parallax
+          Mobile: smaller sizes + reduced blur for GPU performance
+          Desktop: full-size orbs with heavy blur */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.12, scale: 1 }}
         transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-        style={{ x: orbOffset1X, y: orbOffset1Y }}
-        className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#0085C7] rounded-full blur-[150px] will-change-transform"
+        style={isTouch ? undefined : { x: orbOffset1X, y: orbOffset1Y }}
+        className="absolute top-1/3 left-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#0085C7] rounded-full blur-[80px] md:blur-[150px] will-change-transform"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.12, scale: 1 }}
         transition={{ duration: 2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        style={{ x: orbOffset2X, y: orbOffset2Y }}
-        className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-[#DF0024] rounded-full blur-[150px] will-change-transform"
+        style={isTouch ? undefined : { x: orbOffset2X, y: orbOffset2Y }}
+        className="absolute top-1/3 right-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#DF0024] rounded-full blur-[80px] md:blur-[150px] will-change-transform"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        style={{ x: orbOffset3X, y: orbOffset3Y }}
-        className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#F4C300] rounded-full blur-[150px] will-change-transform"
+        style={isTouch ? undefined : { x: orbOffset3X, y: orbOffset3Y }}
+        className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-[#F4C300] rounded-full blur-[80px] md:blur-[150px] will-change-transform"
       />
 
-      {/* Subtle cursor-following ambient glow */}
-      <motion.div
-        className="absolute pointer-events-none will-change-transform"
-        style={{
-          left: glowX,
-          top: glowY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isHovering ? 1 : 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {/* Primary soft glow */}
-        <div
-          className="w-[400px] h-[400px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 40%, transparent 70%)",
-          }}
-        />
-      </motion.div>
+      {/* Cursor-following layers — desktop only, skipped entirely on touch */}
+      {!isTouch && (
+        <>
+          {/* Subtle cursor-following ambient glow */}
+          <motion.div
+            className="absolute pointer-events-none will-change-transform"
+            style={{
+              left: glowX,
+              top: glowY,
+              translateX: "-50%",
+              translateY: "-50%",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: showCursorGlow ? 1 : 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Primary soft glow */}
+            <div
+              className="w-[400px] h-[400px] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 40%, transparent 70%)",
+              }}
+            />
+          </motion.div>
 
-      {/* Secondary subtle highlight ring */}
-      <motion.div
-        className="absolute pointer-events-none will-change-transform"
-        style={{
-          left: glowX,
-          top: glowY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{
-          opacity: isHovering ? 1 : 0,
-          scale: isHovering ? 1 : 0.8,
-        }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div
-          className="w-[600px] h-[600px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, transparent 0%, transparent 30%, rgba(255,255,255,0.008) 50%, transparent 70%)",
-          }}
-        />
-      </motion.div>
+          {/* Secondary subtle highlight ring */}
+          <motion.div
+            className="absolute pointer-events-none will-change-transform"
+            style={{
+              left: glowX,
+              top: glowY,
+              translateX: "-50%",
+              translateY: "-50%",
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{
+              opacity: showCursorGlow ? 1 : 0,
+              scale: showCursorGlow ? 1 : 0.8,
+            }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div
+              className="w-[600px] h-[600px] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, transparent 0%, transparent 30%, rgba(255,255,255,0.008) 50%, transparent 70%)",
+              }}
+            />
+          </motion.div>
 
-      {/* Ambient color tint that follows cursor */}
-      <motion.div
-        className="absolute pointer-events-none will-change-transform mix-blend-soft-light"
-        style={{
-          left: glowX,
-          top: glowY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isHovering ? 1 : 0 }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div
-          className="w-[800px] h-[800px] rounded-full blur-[100px]"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(0,133,199,0.08) 0%, rgba(244,195,0,0.05) 50%, transparent 70%)",
-          }}
-        />
-      </motion.div>
+          {/* Ambient color tint that follows cursor */}
+          <motion.div
+            className="absolute pointer-events-none will-change-transform mix-blend-soft-light"
+            style={{
+              left: glowX,
+              top: glowY,
+              translateX: "-50%",
+              translateY: "-50%",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: showCursorGlow ? 1 : 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div
+              className="w-[800px] h-[800px] rounded-full blur-[100px]"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(0,133,199,0.08) 0%, rgba(244,195,0,0.05) 50%, transparent 70%)",
+              }}
+            />
+          </motion.div>
+        </>
+      )}
 
       {/* Noise texture overlay */}
       <div className="absolute inset-0 noise pointer-events-none" />

@@ -3,13 +3,81 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
+
 interface CursorState {
   isHovering: boolean;
   isPressed: boolean;
   isOverInteractive: boolean;
 }
 
-export const LiquidGlassCursor = () => {
+// Spring configs for the different cursor layers
+const SPRING_CONFIG = { damping: 15, stiffness: 150, mass: 0.8 };
+const SLOW_SPRING_CONFIG = { damping: 25, stiffness: 100, mass: 1.2 };
+const BLOB_SPRING_CONFIG = { damping: 12, stiffness: 80, mass: 1.5 };
+
+// Trail particle configs — defined statically so hooks stay unconditional
+const TRAIL_CONFIGS = [
+  { damping: 20, stiffness: 120, mass: 0.4 },
+  { damping: 24, stiffness: 95, mass: 0.7 },
+  { damping: 28, stiffness: 70, mass: 1.0 },
+  { damping: 32, stiffness: 45, mass: 1.3 },
+] as const;
+
+const TRAIL_SIZES = [10, 8, 6, 4] as const;
+
+/**
+ * Trail particle component — each one gets its own springs so
+ * we avoid calling hooks inside a loop/map in the parent.
+ */
+const TrailParticle = ({
+  index,
+  cursorX,
+  cursorY,
+}: {
+  index: 0 | 1 | 2 | 3;
+  cursorX: ReturnType<typeof useMotionValue<number>>;
+  cursorY: ReturnType<typeof useMotionValue<number>>;
+}) => {
+  const cfg = TRAIL_CONFIGS[index];
+  const size = TRAIL_SIZES[index];
+
+  const x = useSpring(cursorX, cfg);
+  const y = useSpring(cursorY, cfg);
+
+  const opacityVal = 0.2 - index * 0.04;
+  const shadowSpread = 8 - index * 2;
+  const shadowOpacity = 0.15 - index * 0.03;
+
+  return (
+    <motion.div
+      className="absolute"
+      style={{
+        x,
+        y,
+        translateX: "-50%",
+        translateY: "-50%",
+      }}
+    >
+      <motion.div
+        className="rounded-full"
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          background: `rgba(255,255,255,${opacityVal})`,
+          filter: "blur(1px)",
+          boxShadow: `0 0 ${shadowSpread}px rgba(255,255,255,${shadowOpacity})`,
+        }}
+      />
+    </motion.div>
+  );
+};
+
+/**
+ * The actual cursor implementation — only rendered on non-touch devices.
+ * Separated so the parent can gate rendering without breaking hook rules.
+ */
+const LiquidGlassCursorInner = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [cursorState, setCursorState] = useState<CursorState>({
@@ -18,26 +86,21 @@ export const LiquidGlassCursor = () => {
     isOverInteractive: false,
   });
 
-  // Spring configuration for liquid-like fluid motion - slower for bigger blob
-  const springConfig = { damping: 15, stiffness: 150, mass: 0.8 };
-  const slowSpringConfig = { damping: 25, stiffness: 100, mass: 1.2 };
-  const blobSpringConfig = { damping: 12, stiffness: 80, mass: 1.5 };
-
   // Cursor position with spring physics
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
   // Smooth spring-animated position for the glass effect
-  const smoothX = useSpring(cursorX, springConfig);
-  const smoothY = useSpring(cursorY, springConfig);
+  const smoothX = useSpring(cursorX, SPRING_CONFIG);
+  const smoothY = useSpring(cursorY, SPRING_CONFIG);
 
   // Even smoother position for the outer glow (creates trailing effect)
-  const trailX = useSpring(cursorX, slowSpringConfig);
-  const trailY = useSpring(cursorY, slowSpringConfig);
+  const trailX = useSpring(cursorX, SLOW_SPRING_CONFIG);
+  const trailY = useSpring(cursorY, SLOW_SPRING_CONFIG);
 
-  // Blob layer - extra smooth for organic feel
-  const blobX = useSpring(cursorX, blobSpringConfig);
-  const blobY = useSpring(cursorY, blobSpringConfig);
+  // Blob layer — extra smooth for organic feel
+  const blobX = useSpring(cursorX, BLOB_SPRING_CONFIG);
+  const blobY = useSpring(cursorY, BLOB_SPRING_CONFIG);
 
   // Scale spring for interactions
   const scale = useSpring(1, { damping: 18, stiffness: 300 });
@@ -105,8 +168,10 @@ export const LiquidGlassCursor = () => {
     // Hide default cursor
     document.body.style.cursor = "none";
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mousemove", checkInteractiveElement);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("mousemove", checkInteractiveElement, {
+      passive: true,
+    });
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
     document.addEventListener("mouseenter", handleMouseEnter);
@@ -130,16 +195,6 @@ export const LiquidGlassCursor = () => {
     handleMouseLeave,
   ]);
 
-  // Don't render on touch devices
-  useEffect(() => {
-    const isTouchDevice =
-      "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isTouchDevice) {
-      document.body.style.cursor = "auto";
-      setIsVisible(false);
-    }
-  }, []);
-
   return (
     <motion.div
       ref={cursorRef}
@@ -148,7 +203,7 @@ export const LiquidGlassCursor = () => {
       animate={{ opacity: isVisible ? 1 : 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Outermost blob layer - very soft trailing glow */}
+      {/* Outermost blob layer — very soft trailing glow */}
       <motion.div
         className="absolute"
         style={{
@@ -169,7 +224,7 @@ export const LiquidGlassCursor = () => {
         />
       </motion.div>
 
-      {/* Outer trailing glow - creates the liquid feel */}
+      {/* Outer trailing glow — creates the liquid feel */}
       <motion.div
         className="absolute"
         style={{
@@ -239,7 +294,7 @@ export const LiquidGlassCursor = () => {
               }}
             />
 
-            {/* Top highlight - glass reflection */}
+            {/* Top highlight — glass reflection */}
             <div
               className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-4 rounded-full"
               style={{
@@ -268,7 +323,7 @@ export const LiquidGlassCursor = () => {
               }}
             />
 
-            {/* Chromatic aberration effect - subtle color fringing */}
+            {/* Chromatic aberration effect — subtle color fringing */}
             <div
               className="absolute inset-0 rounded-full"
               style={{
@@ -305,38 +360,25 @@ export const LiquidGlassCursor = () => {
         </motion.div>
       </motion.div>
 
-      {/* Liquid trail particles */}
-      {[...Array(4)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            x: useSpring(cursorX, {
-              damping: 20 + i * 4,
-              stiffness: 120 - i * 25,
-              mass: 0.4 + i * 0.3,
-            }),
-            y: useSpring(cursorY, {
-              damping: 20 + i * 4,
-              stiffness: 120 - i * 25,
-              mass: 0.4 + i * 0.3,
-            }),
-            translateX: "-50%",
-            translateY: "-50%",
-          }}
-        >
-          <motion.div
-            className="rounded-full"
-            style={{
-              width: `${10 - i * 2}px`,
-              height: `${10 - i * 2}px`,
-              background: `rgba(255,255,255,${0.2 - i * 0.04})`,
-              filter: "blur(1px)",
-              boxShadow: `0 0 ${8 - i * 2}px rgba(255,255,255,${0.15 - i * 0.03})`,
-            }}
-          />
-        </motion.div>
-      ))}
+      {/* Liquid trail particles — each is its own component to keep hooks unconditional */}
+      <TrailParticle index={0} cursorX={cursorX} cursorY={cursorY} />
+      <TrailParticle index={1} cursorX={cursorX} cursorY={cursorY} />
+      <TrailParticle index={2} cursorX={cursorX} cursorY={cursorY} />
+      <TrailParticle index={3} cursorX={cursorX} cursorY={cursorY} />
     </motion.div>
   );
+};
+
+/**
+ * Public component — gates rendering on device type so touch devices
+ * never mount any springs, listeners, or DOM for the custom cursor.
+ */
+export const LiquidGlassCursor = () => {
+  const isTouch = useIsTouchDevice();
+
+  // SSR or not-yet-detected: render nothing
+  // Touch device: render nothing
+  if (isTouch === null || isTouch) return null;
+
+  return <LiquidGlassCursorInner />;
 };

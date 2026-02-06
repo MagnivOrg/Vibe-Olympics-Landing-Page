@@ -97,6 +97,9 @@ const config: Config = {
   plugins: [
     plugin(function ({ addUtilities }) {
       addUtilities({
+        ".touch-action-manipulation": {
+          "touch-action": "manipulation",
+        },
         ".animate-in": {
           animationName: "enter",
           animationDuration: "150ms",
