@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { FloatingEmojis } from "@/components/FloatingEmojis";
 import { LiquidGlassCursor } from "@/components/LiquidGlassCursor";
 
 import "./globals.css";
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en" className="h-full overflow-hidden">
       <body className="antialiased bg-background text-foreground h-full overflow-hidden">
         <LiquidGlassCursor />
+        <FloatingEmojis />
         {children}
       </body>
     </html>
