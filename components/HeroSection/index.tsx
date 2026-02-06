@@ -49,7 +49,6 @@ const FORMAT_ITEMS = [
 ];
 
 export const HeroSection = ({ data }: HeroSectionProps) => {
-  const [applyOpen, setApplyOpen] = useState(false);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const isTouch = useIsTouchDevice();
 
@@ -135,7 +134,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
             variant="primary"
             size="lg"
             className="w-full sm:w-auto min-w-[180px]"
-            onClick={() => setApplyOpen(true)}
+            onClick={() => window.open("https://partiful.com/e/ZgwBhhmfjWTBjqXcs9dS?c=aejCpAmk", "_blank")}
           >
             {data.ctaText}
           </Button>
@@ -198,35 +197,6 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
         </m.div>
         */}
       </div>
-
-      {/* Apply Dialog */}
-      <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Apply to Compete</DialogTitle>
-            <DialogDescription>
-              Applications open soon. Join our waitlist to be notified.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-6 gap-y-2">
-            <Button variant="secondary" onClick={() => setApplyOpen(false)}>
-              Close
-            </Button>
-            <Button
-              variant="accent"
-              onClick={() => {
-                window.open(
-                  "https://partiful.com/e/ZgwBhhmfjWTBjqXcs9dS?c=aejCpAmk",
-                  "_blank",
-                );
-                setApplyOpen(false);
-              }}
-            >
-              Join Waitlist
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Learn More Dialog */}
       <Dialog open={learnMoreOpen} onOpenChange={setLearnMoreOpen}>
