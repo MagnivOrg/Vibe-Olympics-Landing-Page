@@ -39,7 +39,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
       {/* Interactive Background with parallax orbs and cursor glow */}
       <InteractiveBackground />
 
-      <div className="relative max-w-6xl mx-auto px-6 text-center z-10">
+      <div className="relative max-w-6xl mx-auto px-6 text-center z-20">
         {/* Olympic Rings — Central Element (smaller on mobile) */}
         <m.div
           initial={{ opacity: 0, y: -20 }}
@@ -170,7 +170,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               Applications open soon. Join our waitlist to be notified.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="mt-6">
+          <DialogFooter className="mt-6 gap-y-2">
             <Button variant="secondary" onClick={() => setApplyOpen(false)}>
               Close
             </Button>
