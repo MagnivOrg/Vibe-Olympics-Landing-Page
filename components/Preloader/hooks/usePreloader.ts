@@ -23,23 +23,25 @@ const SESSION_KEY = "vibe-olympics-visited";
  * cursor effects) until the preloader is fully gone.
  */
 export const usePreloader = (fadeOutDurationMs = 400) => {
-  const isRepeatVisit =
-    typeof window !== "undefined" &&
-    sessionStorage.getItem(SESSION_KEY) === "1";
-
-  const [isLoading, setIsLoading] = useState(!isRepeatVisit);
-  const [isDismissed, setIsDismissed] = useState(isRepeatVisit);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     // Mark session so subsequent navigations / refreshes skip the preloader
+    let repeatVisit = false;
     try {
+      repeatVisit = sessionStorage.getItem(SESSION_KEY) === "1";
       sessionStorage.setItem(SESSION_KEY, "1");
     } catch {
       // Storage full or unavailable — not critical
     }
 
-    // If this is a repeat visit we already initialised as dismissed
-    if (isRepeatVisit) return;
+    // If this is a repeat visit, skip the preloader immediately
+    if (repeatVisit) {
+      setIsLoading(false);
+      setIsDismissed(true);
+      return;
+    }
 
     const start = performance.now();
 
@@ -66,7 +68,7 @@ export const usePreloader = (fadeOutDurationMs = 400) => {
       window.addEventListener("load", finish, { once: true });
       return () => window.removeEventListener("load", finish);
     }
-  }, [fadeOutDurationMs, isRepeatVisit]);
+  }, [fadeOutDurationMs]);
 
   const dismiss = useCallback(() => {
     setIsLoading(false);
