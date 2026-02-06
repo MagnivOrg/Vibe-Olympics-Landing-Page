@@ -1,9 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { OlympicRings } from "@/components/ui/olympic-rings";
 
 interface HeroData {
@@ -20,6 +29,9 @@ interface HeroSectionProps {
 }
 
 export const HeroSection = ({ data }: HeroSectionProps) => {
+  const [applyOpen, setApplyOpen] = useState(false);
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+
   return (
     <section className="relative h-full w-full flex items-center justify-center overflow-hidden">
       {/* Interactive Background with parallax orbs and cursor glow */}
@@ -99,10 +111,20 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button variant="primary" size="lg" className="min-w-[180px]">
+          <Button
+            variant="primary"
+            size="lg"
+            className="min-w-[180px]"
+            onClick={() => setApplyOpen(true)}
+          >
             {data.ctaText}
           </Button>
-          <Button variant="secondary" size="lg" className="min-w-[180px]">
+          <Button
+            variant="secondary"
+            size="lg"
+            className="min-w-[180px]"
+            onClick={() => setLearnMoreOpen(true)}
+          >
             {data.ctaSecondary}
           </Button>
         </motion.div>
@@ -136,6 +158,44 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           </div>
         </motion.div>
       </div>
+
+      {/* Apply Dialog */}
+      <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Apply to Compete</DialogTitle>
+            <DialogDescription>
+              Applications open soon. Join our waitlist to be notified.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-6">
+            <Button variant="secondary" onClick={() => setApplyOpen(false)}>
+              Close
+            </Button>
+            <Button variant="accent" onClick={() => setApplyOpen(false)}>
+              Join Waitlist
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Learn More Dialog */}
+      <Dialog open={learnMoreOpen} onOpenChange={setLearnMoreOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>About Vibe Olympics</DialogTitle>
+            <DialogDescription>
+              48-hour creative competition. Build something incredible. Win
+              glory and prizes.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-6">
+            <Button variant="secondary" onClick={() => setLearnMoreOpen(false)}>
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

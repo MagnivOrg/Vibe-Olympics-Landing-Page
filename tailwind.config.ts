@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: [
@@ -74,6 +75,14 @@ const config: Config = {
           "0%": { backgroundPosition: "-1000px 0" },
           "100%": { backgroundPosition: "1000px 0" },
         },
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -85,7 +94,52 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".animate-in": {
+          animationName: "enter",
+          animationDuration: "150ms",
+          "--tw-enter-opacity": "initial",
+          "--tw-enter-scale": "initial",
+          "--tw-enter-rotate": "initial",
+          "--tw-enter-translate-x": "initial",
+          "--tw-enter-translate-y": "initial",
+        },
+        ".animate-out": {
+          animationName: "exit",
+          animationDuration: "150ms",
+          "--tw-exit-opacity": "initial",
+          "--tw-exit-scale": "initial",
+          "--tw-exit-rotate": "initial",
+          "--tw-exit-translate-x": "initial",
+          "--tw-exit-translate-y": "initial",
+        },
+        ".fade-in-0": { "--tw-enter-opacity": "0" },
+        ".fade-out-0": { "--tw-exit-opacity": "0" },
+        ".zoom-in-95": { "--tw-enter-scale": ".95" },
+        ".zoom-out-95": { "--tw-exit-scale": ".95" },
+        ".slide-in-from-top-\\[48\\%\\]": { "--tw-enter-translate-y": "-48%" },
+        ".slide-in-from-left-1\\/2": { "--tw-enter-translate-x": "-50%" },
+        ".slide-out-to-top-\\[48\\%\\]": { "--tw-exit-translate-y": "-48%" },
+        ".slide-out-to-left-1\\/2": { "--tw-exit-translate-x": "-50%" },
+        "@keyframes enter": {
+          from: {
+            opacity: "var(--tw-enter-opacity, 1)",
+            transform:
+              "translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0))",
+          },
+        },
+        "@keyframes exit": {
+          to: {
+            opacity: "var(--tw-exit-opacity, 1)",
+            transform:
+              "translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
+          },
+        },
+      });
+    }),
+  ],
 };
 
 export default config;
