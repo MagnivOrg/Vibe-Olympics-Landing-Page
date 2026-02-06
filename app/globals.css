@@ -154,6 +154,22 @@
     color: white;
 }
 
+/* Hide default cursor globally when custom cursor is active */
+* {
+    cursor: none !important;
+}
+
+/* Ensure interactive elements still show pointer behavior for accessibility */
+a,
+button,
+[role="button"],
+input,
+textarea,
+select,
+[data-interactive] {
+    cursor: none !important;
+}
+
 /* Noise texture overlay */
 .noise {
     position: relative;

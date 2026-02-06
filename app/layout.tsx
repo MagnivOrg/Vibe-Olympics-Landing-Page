@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import { LiquidGlassCursor } from "@/components/LiquidGlassCursor";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full overflow-hidden">
       <body className="antialiased bg-background text-foreground h-full overflow-hidden">
+        <LiquidGlassCursor />
         {children}
       </body>
     </html>

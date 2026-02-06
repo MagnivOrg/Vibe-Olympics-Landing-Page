@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 
+import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/button";
 import { OlympicRings } from "@/components/ui/olympic-rings";
 
@@ -20,31 +21,9 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ data }: HeroSectionProps) => {
   return (
-    <section className="relative h-full w-full flex items-center justify-center overflow-hidden noise">
-      {/* Grid background */}
-      <div className="absolute inset-0 grid-bg opacity-20" />
-
-      {/* Gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.12, scale: 1 }}
-          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#0085C7] rounded-full blur-[150px]"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.12, scale: 1 }}
-          transition={{ duration: 2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-[#DF0024] rounded-full blur-[150px]"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#F4C300] rounded-full blur-[150px]"
-        />
-      </div>
+    <section className="relative h-full w-full flex items-center justify-center overflow-hidden">
+      {/* Interactive Background with parallax orbs and cursor glow */}
+      <InteractiveBackground />
 
       <div className="relative max-w-6xl mx-auto px-6 text-center z-10">
         {/* Olympic Rings - Central Element */}

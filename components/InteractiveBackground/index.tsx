@@ -1,0 +1,189 @@
+"use client";
+
+import { motion, useSpring, useTransform } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
+export const InteractiveBackground = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isHovering, setIsHovering] = useState(false);
+
+  // Spring configuration for Apple-like fluid motion
+  const springConfig = { damping: 25, stiffness: 150, mass: 0.5 };
+  const slowSpringConfig = { damping: 40, stiffness: 90, mass: 1 };
+
+  // Mouse position with spring physics
+  const mouseX = useSpring(0.5, springConfig);
+  const mouseY = useSpring(0.5, springConfig);
+
+  // Slower springs for parallax layers
+  const slowMouseX = useSpring(0.5, slowSpringConfig);
+  const slowMouseY = useSpring(0.5, slowSpringConfig);
+
+  // Transform mouse position to parallax offsets
+  const orbOffset1X = useTransform(slowMouseX, [0, 1], [-30, 30]);
+  const orbOffset1Y = useTransform(slowMouseY, [0, 1], [-30, 30]);
+  const orbOffset2X = useTransform(slowMouseX, [0, 1], [20, -20]);
+  const orbOffset2Y = useTransform(slowMouseY, [0, 1], [20, -20]);
+  const orbOffset3X = useTransform(slowMouseX, [0, 1], [-15, 15]);
+  const orbOffset3Y = useTransform(slowMouseY, [0, 1], [25, -25]);
+
+  // Cursor glow position
+  const glowX = useTransform(mouseX, [0, 1], ["0%", "100%"]);
+  const glowY = useTransform(mouseY, [0, 1], ["0%", "100%"]);
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+
+      mouseX.set(x);
+      mouseY.set(y);
+      slowMouseX.set(x);
+      slowMouseY.set(y);
+    },
+    [mouseX, mouseY, slowMouseX, slowMouseY]
+  );
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false);
+    // Smoothly return to center
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+    slowMouseX.set(0.5);
+    slowMouseY.set(0.5);
+  }, [mouseX, mouseY, slowMouseX, slowMouseY]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseenter", handleMouseEnter);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseenter", handleMouseEnter);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [handleMouseMove, handleMouseEnter, handleMouseLeave]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-0 overflow-hidden"
+      style={{ isolation: "isolate" }}
+    >
+      {/* Base grid background */}
+      <div className="absolute inset-0 grid-bg opacity-20" />
+
+      {/* Interactive gradient orbs with parallax */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.12, scale: 1 }}
+        transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+        style={{ x: orbOffset1X, y: orbOffset1Y }}
+        className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#0085C7] rounded-full blur-[150px] will-change-transform"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.12, scale: 1 }}
+        transition={{ duration: 2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        style={{ x: orbOffset2X, y: orbOffset2Y }}
+        className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-[#DF0024] rounded-full blur-[150px] will-change-transform"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.1, scale: 1 }}
+        transition={{ duration: 2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        style={{ x: orbOffset3X, y: orbOffset3Y }}
+        className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#F4C300] rounded-full blur-[150px] will-change-transform"
+      />
+
+      {/* Subtle cursor-following ambient glow */}
+      <motion.div
+        className="absolute pointer-events-none will-change-transform"
+        style={{
+          left: glowX,
+          top: glowY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovering ? 1 : 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {/* Primary soft glow */}
+        <div
+          className="w-[400px] h-[400px] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 40%, transparent 70%)",
+          }}
+        />
+      </motion.div>
+
+      {/* Secondary subtle highlight ring */}
+      <motion.div
+        className="absolute pointer-events-none will-change-transform"
+        style={{
+          left: glowX,
+          top: glowY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{
+          opacity: isHovering ? 1 : 0,
+          scale: isHovering ? 1 : 0.8,
+        }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div
+          className="w-[600px] h-[600px] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, transparent 0%, transparent 30%, rgba(255,255,255,0.008) 50%, transparent 70%)",
+          }}
+        />
+      </motion.div>
+
+      {/* Ambient color tint that follows cursor */}
+      <motion.div
+        className="absolute pointer-events-none will-change-transform mix-blend-soft-light"
+        style={{
+          left: glowX,
+          top: glowY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovering ? 1 : 0 }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div
+          className="w-[800px] h-[800px] rounded-full blur-[100px]"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(0,133,199,0.08) 0%, rgba(244,195,0,0.05) 50%, transparent 70%)",
+          }}
+        />
+      </motion.div>
+
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 noise pointer-events-none" />
+    </div>
+  );
+};
