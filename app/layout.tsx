@@ -4,9 +4,13 @@ import { ClientShell } from "@/components/ClientShell";
 
 import "./globals.css";
 
+const siteUrl = "https://vibeolympics.com";
+const description = "The vibe coding competition — February 26, 2026 in NYC";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Vibe Olympics",
-  description: "The vibe coding competition — February 26, 2026 in NYC",
+  description,
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -21,10 +25,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Vibe Olympics",
-    description: "The vibe coding competition — February 26, 2026 in NYC",
+    description,
     siteName: "Vibe Olympics",
     type: "website",
     locale: "en_US",
+    url: siteUrl,
     images: [
       {
         url: "/og-image.png",
@@ -37,13 +42,16 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Vibe Olympics",
-    description: "The vibe coding competition — February 26, 2026 in NYC",
-    images: ["/twitter-image.png"],
+    description,
+    images: ["/og-image.png"],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Vibe Olympics",
+  },
+  other: {
+    "apple-mobile-web-app-title": "Vibe Olympics",
   },
 };
 

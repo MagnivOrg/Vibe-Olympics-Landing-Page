@@ -1,7 +1,7 @@
 {
   "name": "Vibe Olympics",
   "short_name": "Vibe Olympics",
-  "description": "Where creators compete",
+  "description": "The vibe coding competition — February 26, 2026 in NYC",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
@@ -33,6 +33,15 @@
       "src": "/apple-touch-icon.png",
       "type": "image/png",
       "sizes": "180x180"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "2004x1144",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vibe Olympics — The vibe coding competition"
     }
   ]
 }
