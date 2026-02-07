@@ -4,7 +4,7 @@ import { ClientShell } from "@/components/ClientShell";
 
 import "./globals.css";
 
-const siteUrl = "https://vibeolympics.com";
+const siteUrl = "https://vibeolympics.org";
 const description = "The vibe coding competition — February 26, 2026 in NYC";
 
 export const metadata: Metadata = {
