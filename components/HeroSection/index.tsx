@@ -63,9 +63,9 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex justify-center mb-6 sm:mb-10"
+          className="flex justify-center mb-2 sm:mb-10"
         >
-          <OlympicRings size={isTouch ? "md" : "lg"} animated />
+          <OlympicRings size={isTouch ? "sm" : "lg"} animated />
         </m.div>
 
         {/* Badge */}
@@ -73,10 +73,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-4 sm:mb-6 inline-block"
+          className="mb-2 sm:mb-6 inline-block"
         >
-          <div className="inline-flex items-center px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
-            <span className="text-sm font-medium text-white/70 tracking-wide uppercase">
+          <div className="inline-flex items-center px-3 py-1.5 sm:px-5 sm:py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
+            <span className="text-xs sm:text-sm font-medium text-white/70 tracking-wide uppercase">
               {data.badge}
             </span>
           </div>
@@ -88,7 +88,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="text-display font-bold text-foreground mb-3 sm:mb-4 leading-[0.95] tracking-tight">
+          <h1 className="text-display font-bold text-foreground mb-1 sm:mb-4 leading-[0.95] tracking-tight">
             {data.title}
           </h1>
         </m.div>
@@ -100,7 +100,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
           <p
-            className="text-2xl sm:text-4xl italic font-semibold mb-4 sm:mb-6"
+            className="text-lg sm:text-4xl italic font-semibold mb-1.5 sm:mb-6"
             style={{
               background: "linear-gradient(135deg, #0085C7, #F4C300, #DF0024)",
               WebkitBackgroundClip: "text",
@@ -118,7 +118,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed font-light">
+          <p className="text-xs sm:text-lg text-white/50 max-w-2xl mx-auto mb-3 sm:mb-10 leading-relaxed font-light">
             {data.description}
           </p>
         </m.div>
@@ -128,7 +128,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4"
         >
           <Button
             variant="primary"
@@ -153,49 +153,41 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-8 sm:mt-16 flex items-center justify-center gap-2"
+          className="mt-3 sm:mt-8 flex items-center justify-center gap-1.5 sm:gap-2"
         >
-          <span className="text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
+          <span className="text-[10px] sm:text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
             Run by
           </span>
           <Image
             src="/promptlayer-logo.svg"
             alt="PromptLayer"
-            width={160}
-            height={23}
-            className="opacity-40"
+            width={100}
+            height={14}
+            className="opacity-40 sm:w-[160px] sm:h-[23px]"
           />
         </m.div>
 
-        {/* Partnered with — hidden until sponsors confirmed
+        {/* Sponsors */}
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/[0.06]"
+          className="mt-2 sm:mt-5"
         >
-          <p className="text-xs text-white/30 mb-4 sm:mb-5 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-medium">
-            Partnered with
+          <p className="text-[10px] sm:text-xs text-white/30 mb-2 sm:mb-3 uppercase tracking-[0.15em] font-medium">
+            Sponsored by
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-            {["Vercel", "NVIDIA", "OpenAI"].map((company, index) => (
-              <m.div
-                key={company}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.6 + index * 0.08,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="text-base font-medium text-white/25 hover:text-white/60 transition-colors duration-300 cursor-pointer"
-              >
-                {company}
-              </m.div>
-            ))}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
+            <Image
+              src="/exa-logo.svg"
+              alt="Exa"
+              width={70}
+              height={21}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
+              onClick={() => window.open("https://exa.ai", "_blank")}
+            />
           </div>
         </m.div>
-        */}
       </div>
 
       {/* Learn More Dialog */}

@@ -29,7 +29,7 @@ const config: Config = {
       },
       fontSize: {
         display: [
-          "clamp(3rem, 8vw, 7rem)",
+          "clamp(2.25rem, 8vw, 7rem)",
           { lineHeight: "1", letterSpacing: "-0.02em", fontWeight: "700" },
         ],
         hero: [
