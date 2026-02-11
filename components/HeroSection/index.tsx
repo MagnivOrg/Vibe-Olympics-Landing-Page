@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { m } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
@@ -34,17 +34,20 @@ const FORMAT_ITEMS = [
   {
     round: "Round 1",
     title: "The Qualifier",
-    description: "All competitors get the same prompt. Build as fast as you can. Top builders advance.",
+    description:
+      "All competitors get the same prompt. Build as fast as you can. Top builders advance.",
   },
   {
     round: "Round 2",
     title: "The Showdown",
-    description: "Harder prompt. Fewer competitors. The field narrows down to the final two.",
+    description:
+      "Harder prompt. Fewer competitors. The field narrows down to the final two.",
   },
   {
     round: "Round 3",
     title: "The Final",
-    description: "1v1 on stage. Live coding. Live commentary. The audience watches every keystroke.",
+    description:
+      "1v1 on stage. Live coding. Live commentary. The audience watches every keystroke.",
   },
 ];
 
@@ -53,19 +56,26 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
   const isTouch = useIsTouchDevice();
 
   return (
-    <section className="relative h-full w-full flex items-center justify-center overflow-hidden px-4 sm:px-6">
+    <section
+      className="relative h-dvh w-full flex items-center justify-center overflow-hidden px-4 sm:px-6"
+      style={{
+        paddingTop: "clamp(1.5rem, 4vh, 3rem)",
+        paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
+      }}
+    >
       {/* Interactive Background with parallax orbs and cursor glow */}
       <InteractiveBackground />
 
-      <div className="relative max-w-6xl mx-auto px-6 text-center z-20">
+      <div className="relative max-w-6xl w-full mx-auto px-6 text-center z-20 flex flex-col items-center max-h-full">
         {/* Olympic Rings — Central Element (smaller on mobile) */}
         <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex justify-center mb-6 sm:mb-10"
+          className="flex justify-center shrink-0"
+          style={{ marginBottom: "clamp(0.5rem, 1.5vh, 2.5rem)" }}
         >
-          <OlympicRings size={isTouch ? "md" : "lg"} animated />
+          <OlympicRings size={isTouch ? "sm" : "lg"} animated />
         </m.div>
 
         {/* Badge */}
@@ -73,10 +83,11 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-4 sm:mb-6 inline-block"
+          className="inline-block shrink-0"
+          style={{ marginBottom: "clamp(0.5rem, 1vh, 1.5rem)" }}
         >
-          <div className="inline-flex items-center px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
-            <span className="text-sm font-medium text-white/70 tracking-wide uppercase">
+          <div className="inline-flex items-center px-3 py-1.5 sm:px-5 sm:py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
+            <span className="text-xs sm:text-sm font-medium text-white/70 tracking-wide uppercase">
               {data.badge}
             </span>
           </div>
@@ -87,8 +98,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="shrink-0"
+          style={{ marginBottom: "clamp(0.25rem, 0.75vh, 1rem)" }}
         >
-          <h1 className="text-display font-bold text-foreground mb-3 sm:mb-4 leading-[0.95] tracking-tight">
+          <h1 className="text-display font-bold text-foreground leading-[0.95] tracking-tight">
             {data.title}
           </h1>
         </m.div>
@@ -98,9 +111,11 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="shrink-0"
+          style={{ marginBottom: "clamp(0.375rem, 1vh, 1.5rem)" }}
         >
           <p
-            className="text-2xl sm:text-4xl italic font-semibold mb-4 sm:mb-6"
+            className="text-lg sm:text-4xl italic font-semibold"
             style={{
               background: "linear-gradient(135deg, #0085C7, #F4C300, #DF0024)",
               WebkitBackgroundClip: "text",
@@ -117,8 +132,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="shrink-0"
+          style={{ marginBottom: "clamp(0.75rem, 2vh, 2.5rem)" }}
         >
-          <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed font-light">
+          <p className="text-xs sm:text-lg text-white/50 max-w-2xl mx-auto leading-relaxed font-light">
             {data.description}
           </p>
         </m.div>
@@ -128,13 +145,18 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 shrink-0"
         >
           <Button
             variant="primary"
             size="lg"
             className="w-full sm:w-auto min-w-[180px]"
-            onClick={() => window.open("https://partiful.com/e/ZgwBhhmfjWTBjqXcs9dS?c=aejCpAmk", "_blank")}
+            onClick={() =>
+              window.open(
+                "https://partiful.com/e/ZgwBhhmfjWTBjqXcs9dS?c=aejCpAmk",
+                "_blank",
+              )
+            }
           >
             {data.ctaText}
           </Button>
@@ -153,87 +175,84 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-8 sm:mt-16 flex items-center justify-center gap-2"
+          className="flex items-center justify-center gap-1.5 sm:gap-2 shrink-0"
+          style={{ marginTop: "clamp(0.75rem, 1.5vh, 2rem)" }}
         >
-          <span className="text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
+          <span className="text-[10px] sm:text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
             Run by
           </span>
           <Image
             src="/promptlayer-logo.svg"
             alt="PromptLayer"
-            width={160}
-            height={23}
-            className="opacity-40"
+            width={100}
+            height={14}
+            className="opacity-40 sm:w-[160px] sm:h-[23px]"
           />
         </m.div>
 
-        {/* Partnered with — hidden until sponsors confirmed
+        {/* Sponsors */}
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/[0.06]"
+          className="shrink-0"
+          style={{ marginTop: "clamp(0.5rem, 1vh, 1.25rem)" }}
         >
-          <p className="text-xs text-white/30 mb-4 sm:mb-5 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-medium">
-            Partnered with
+          <p className="text-[10px] sm:text-xs text-white/30 mb-2 sm:mb-3 uppercase tracking-[0.15em] font-medium">
+            Sponsored by
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-            {["Vercel", "NVIDIA", "OpenAI"].map((company, index) => (
-              <m.div
-                key={company}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.6 + index * 0.08,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="text-base font-medium text-white/25 hover:text-white/60 transition-colors duration-300 cursor-pointer"
-              >
-                {company}
-              </m.div>
-            ))}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
+            <Image
+              src="/exa-logo.svg"
+              alt="Exa"
+              width={70}
+              height={21}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
+              onClick={() => window.open("https://exa.ai", "_blank")}
+            />
           </div>
         </m.div>
-        */}
       </div>
 
       {/* Learn More Dialog */}
       <Dialog open={learnMoreOpen} onOpenChange={setLearnMoreOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>How It Works</DialogTitle>
-            <DialogDescription>
-              A live tournament-style vibe coding competition. Three rounds, one stage, one winner.
+            <DialogTitle className="text-lg sm:text-2xl">
+              How It Works
+            </DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
+              A live tournament-style vibe coding competition. Three rounds, one
+              stage, one winner.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-1 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-3 sm:mt-4">
             {FORMAT_ITEMS.map((item) => (
               <div
                 key={item.round}
-                className="bg-white/[0.04] border border-white/10 rounded-xl p-4 text-left"
+                className="bg-white/[0.04] border border-white/10 rounded-xl p-3 sm:p-4 text-left"
               >
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-1 block">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-white/30 mb-1 block">
                   {item.round}
                 </span>
-                <h3 className="text-base font-semibold text-white mb-1">
+                <h3 className="text-sm sm:text-base font-semibold text-white mb-1">
                   {item.title}
                 </h3>
-                <p className="text-sm text-white/40 leading-relaxed">
+                <p className="text-xs sm:text-sm text-white/40 leading-relaxed">
                   {item.description}
                 </p>
               </div>
             ))}
           </div>
-          <div className="mt-4 pt-4 border-t border-white/[0.06] text-center">
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/[0.06] text-center">
             <a
               href="mailto:hello@promptlayer.com"
-              className="text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
+              className="text-xs sm:text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
             >
               Contact us to sponsor or get involved →
             </a>
           </div>
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-3 sm:mt-4">
             <Button variant="secondary" onClick={() => setLearnMoreOpen(false)}>
               Got it
             </Button>

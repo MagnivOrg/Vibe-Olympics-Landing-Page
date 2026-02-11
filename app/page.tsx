@@ -16,7 +16,7 @@ export default async function Home() {
   };
 
   return (
-    <main className="h-full overflow-hidden bg-background">
+    <main className="h-dvh overflow-hidden bg-background">
       <HeroSection data={serverData.hero} />
     </main>
   );
