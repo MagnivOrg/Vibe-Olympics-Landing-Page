@@ -4,114 +4,6 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
 
-/**
- * Deduplicated & trimmed emoji palette.
- * Keeping ~100 unique entries is plenty for visual variety while reducing
- * the static array cost and keeping the module lighter.
- */
-const VIBE_EMOJIS = [
-  "✨",
-  "🎨",
-  "🚀",
-  "💫",
-  "🎯",
-  "⚡",
-  "🔥",
-  "💎",
-  "🌟",
-  "🎪",
-  "🌈",
-  "🎵",
-  "🎶",
-  "🎉",
-  "🎊",
-  "🌺",
-  "🌸",
-  "🌼",
-  "🌻",
-  "🦋",
-  "🐚",
-  "🍀",
-  "🌙",
-  "☀️",
-  "🌊",
-  "🎭",
-  "🎸",
-  "🎹",
-  "🎺",
-  "🎷",
-  "🥁",
-  "🎤",
-  "🎬",
-  "📸",
-  "🎮",
-  "🕹️",
-  "🎲",
-  "🧩",
-  "🪁",
-  "🎈",
-  "🎀",
-  "🎁",
-  "🏆",
-  "🥇",
-  "🏅",
-  "👑",
-  "💖",
-  "💗",
-  "💞",
-  "❤️",
-  "🧡",
-  "💛",
-  "💚",
-  "💙",
-  "💜",
-  "🌀",
-  "🕺",
-  "💃",
-  "🪩",
-  "🎼",
-  "🎧",
-  "🔮",
-  "🪄",
-  "🌌",
-  "🦚",
-  "🦜",
-  "🦩",
-  "🐬",
-  "🐳",
-  "🦄",
-  "🐉",
-  "🍉",
-  "🍊",
-  "🍋",
-  "🍍",
-  "🍑",
-  "🍒",
-  "🍓",
-  "🍭",
-  "🍩",
-  "🧁",
-  "🎂",
-  "🍦",
-  "☕",
-  "🥂",
-  "🍾",
-  "🏄",
-  "🏂",
-  "🛹",
-  "🛸",
-  "⛵",
-  "🥳",
-  "🤩",
-  "😎",
-  "🤪",
-  "🫠",
-  "💯",
-  "⭐",
-  "💥",
-  "🎆",
-];
-
 // ─── Particle data ──────────────────────────────────────────────────────────
 
 interface ParticleData {
@@ -135,8 +27,11 @@ interface ParticleData {
 
   /** Index into the pre-rendered glyph atlas. */
   glyphIndex: number;
-  /** The emoji character assigned to this particle (preserved across DPR changes). */
-  emoji: string;
+
+  /** Phase offset for the tilt oscillation (radians). */
+  tiltPhase: number;
+  /** Speed of the tilt oscillation. */
+  tiltSpeed: number;
 
   // ── Entrance animation state ──
   /** 0 → 1 progress through the entrance animation. */
@@ -149,7 +44,7 @@ interface ParticleData {
   age: number;
 }
 
-/** A pre-rendered emoji bitmap and its CSS-space dimensions. */
+/** A pre-rendered ring bitmap and its CSS-space dimensions. */
 interface GlyphEntry {
   canvas: HTMLCanvasElement;
   /** The CSS-pixel width/height used when drawing (before DPR scaling). */
@@ -186,6 +81,10 @@ const ENTRANCE_DRIFT_VH = 6;
 // Starting scale factor (grows to 1.0).
 const ENTRANCE_SCALE_START = 0.45;
 
+// ── Tilt (3D rotation axis) tuning ──
+/** Minimum Y-scale when the ring is "edge-on" */
+const TILT_MIN_SCALE = 0.55;
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 /** Deceleration ease-out: `1 - (1 - t)^3` */
@@ -194,18 +93,52 @@ const cubicOut = (t: number): number => {
   return 1 - inv * inv * inv;
 };
 
+/** Linearly interpolate between two values. */
+const lerpVal = (a: number, b: number, t: number): number => a + (b - a) * t;
+
+/** Clamp to 0–255 and round. */
+const clamp255 = (v: number): number =>
+  Math.max(0, Math.min(255, Math.round(v)));
+
+/** Interpolate two RGB triplets and return a CSS colour string. */
+const lerpRGB = (
+  c1: [number, number, number],
+  c2: [number, number, number],
+  t: number,
+): string =>
+  `rgb(${clamp255(lerpVal(c1[0], c2[0], t))},${clamp255(lerpVal(c1[1], c2[1], t))},${clamp255(lerpVal(c1[2], c2[2], t))})`;
+
+// ─── Polished-gold colour palette ───────────────────────────────────────────
+// Organised as [R, G, B] tuples.
+//
+// Two axes control colour:
+//   1. Tube cross-section  —  CENTER (highlight) vs EDGE (shadow)
+//   2. Ring position        —  TOP (lit) vs MID vs BOTTOM (shadow)
+//
+// The large contrast range is what makes the metal look "shiny".
+
+// Centre of tube band (the bright crown)
+const CT_TOP: [number, number, number] = [255, 253, 225]; // warm near-white
+const CT_MID: [number, number, number] = [255, 220, 50]; // rich gold
+const CT_BOT: [number, number, number] = [195, 145, 35]; // dark gold
+
+// Edges of tube band (the dark flanks)
+const CE_TOP: [number, number, number] = [225, 185, 65]; // muted gold
+const CE_MID: [number, number, number] = [160, 115, 15]; // dark goldenrod
+const CE_BOT: [number, number, number] = [75, 48, 12]; // deep warm brown
+
 /**
- * Pre-render a single emoji glyph to an offscreen canvas.
- * The canvas is sized with DPR padding so it stays crisp on retina displays.
- * A 1.4× padding factor accounts for emoji glyphs that extend beyond their
- * measured em-square (common with colour emoji fonts).
+ * Pre-render a smooth, shiny golden ring to an offscreen canvas.
+ *
+ * Technique: concentric 1-px arc strokes from outer to inner radius.
+ * Each stroke gets a vertical linear gradient whose colours are derived from
+ * its radial position in the tube (bright crown vs dark flanks) combined with
+ * the top-lit directional light (bright top, dark bottom).
+ *
+ * The result is a pixel-smooth metallic torus with no banding.
  */
-const prerenderGlyph = (
-  emoji: string,
-  size: number,
-  dpr: number,
-): GlyphEntry => {
-  const padding = 1.4;
+const prerenderRing = (size: number, dpr: number): GlyphEntry => {
+  const padding = 1.6;
   const cssSize = Math.ceil(size * padding);
   const pxSize = Math.ceil(cssSize * dpr);
 
@@ -216,10 +149,161 @@ const prerenderGlyph = (
   const ctx = canvas.getContext("2d");
   if (ctx) {
     ctx.scale(dpr, dpr);
-    ctx.font = `${size}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(emoji, cssSize / 2, cssSize / 2);
+
+    const cx = cssSize / 2;
+    const cy = cssSize / 2;
+    const outerRadius = size * 0.46;
+    const ringThickness = outerRadius * 0.46;
+    const innerRadius = outerRadius - ringThickness;
+    const midRadius = (outerRadius + innerRadius) / 2;
+
+    // ── Helper: clip to ring annulus ──
+    const clipToRing = () => {
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerRadius + 0.5, 0, Math.PI * 2);
+      ctx.arc(cx, cy, innerRadius - 0.5, 0, Math.PI * 2, true);
+      ctx.clip("evenodd");
+    };
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Pass 1 — Concentric strokes building the smooth metallic torus body
+    // ══════════════════════════════════════════════════════════════════════
+    const bandSteps = Math.max(Math.ceil(ringThickness * dpr), 18);
+    const strokeW = ringThickness / bandSteps + 0.6; // slight overlap
+
+    for (let s = 0; s <= bandSteps; s++) {
+      const t = s / bandSteps; // 0 = outer edge → 1 = inner edge
+      const radius = outerRadius - t * ringThickness;
+
+      // Bell-curve brightness across the tube (bright centre, dark flanks)
+      const tubeT = Math.pow(Math.sin(t * Math.PI), 0.65);
+
+      // Interpolated colour triplets for this concentric ring
+      const colTop: [number, number, number] = [
+        lerpVal(CE_TOP[0], CT_TOP[0], tubeT),
+        lerpVal(CE_TOP[1], CT_TOP[1], tubeT),
+        lerpVal(CE_TOP[2], CT_TOP[2], tubeT),
+      ];
+      const colMid: [number, number, number] = [
+        lerpVal(CE_MID[0], CT_MID[0], tubeT),
+        lerpVal(CE_MID[1], CT_MID[1], tubeT),
+        lerpVal(CE_MID[2], CT_MID[2], tubeT),
+      ];
+      const colBot: [number, number, number] = [
+        lerpVal(CE_BOT[0], CT_BOT[0], tubeT),
+        lerpVal(CE_BOT[1], CT_BOT[1], tubeT),
+        lerpVal(CE_BOT[2], CT_BOT[2], tubeT),
+      ];
+
+      const grad = ctx.createLinearGradient(cx, cy - radius, cx, cy + radius);
+      grad.addColorStop(0, lerpRGB(colTop, colTop, 0));
+      grad.addColorStop(0.18, lerpRGB(colTop, colMid, 0.35));
+      grad.addColorStop(0.48, lerpRGB(colMid, colMid, 0));
+      grad.addColorStop(0.78, lerpRGB(colMid, colBot, 0.65));
+      grad.addColorStop(1, lerpRGB(colBot, colBot, 0));
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = strokeW;
+      ctx.stroke();
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Pass 2 — Specular highlight: intense warm bloom on the top arc
+    // ══════════════════════════════════════════════════════════════════════
+    ctx.save();
+    clipToRing();
+
+    const specGrad = ctx.createRadialGradient(
+      cx,
+      cy - outerRadius * 0.48,
+      0,
+      cx,
+      cy - outerRadius * 0.12,
+      outerRadius * 0.95,
+    );
+    specGrad.addColorStop(0, "rgba(255, 255, 240, 0.97)");
+    specGrad.addColorStop(0.06, "rgba(255, 253, 225, 0.88)");
+    specGrad.addColorStop(0.15, "rgba(255, 248, 195, 0.58)");
+    specGrad.addColorStop(0.3, "rgba(255, 235, 130, 0.25)");
+    specGrad.addColorStop(0.5, "rgba(255, 215, 60, 0.07)");
+    specGrad.addColorStop(0.7, "rgba(255, 200, 0, 0)");
+
+    ctx.fillStyle = specGrad;
+    ctx.fillRect(0, 0, cssSize, cssSize);
+
+    // Tight hot-spot slightly left of top-centre
+    const hotGrad = ctx.createRadialGradient(
+      cx - outerRadius * 0.18,
+      cy - midRadius * 0.88,
+      0,
+      cx - outerRadius * 0.08,
+      cy - midRadius * 0.72,
+      ringThickness * 1.1,
+    );
+    hotGrad.addColorStop(0, "rgba(255, 255, 252, 0.98)");
+    hotGrad.addColorStop(0.12, "rgba(255, 255, 240, 0.65)");
+    hotGrad.addColorStop(0.35, "rgba(255, 248, 200, 0.22)");
+    hotGrad.addColorStop(1, "rgba(255, 230, 100, 0)");
+
+    ctx.fillStyle = hotGrad;
+    ctx.fillRect(0, 0, cssSize, cssSize);
+    ctx.restore();
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Pass 3 — Bottom warm bounce-light (polished gold reflects itself)
+    // ══════════════════════════════════════════════════════════════════════
+    ctx.save();
+    clipToRing();
+
+    const bounceGrad = ctx.createRadialGradient(
+      cx + outerRadius * 0.12,
+      cy + outerRadius * 0.48,
+      0,
+      cx,
+      cy + outerRadius * 0.28,
+      outerRadius * 0.75,
+    );
+    bounceGrad.addColorStop(0, "rgba(255, 215, 100, 0.35)");
+    bounceGrad.addColorStop(0.25, "rgba(255, 195, 60, 0.15)");
+    bounceGrad.addColorStop(0.6, "rgba(200, 150, 40, 0)");
+
+    ctx.fillStyle = bounceGrad;
+    ctx.fillRect(0, 0, cssSize, cssSize);
+    ctx.restore();
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Pass 4 — Edge definition strokes
+    // ══════════════════════════════════════════════════════════════════════
+
+    // Outer dark border
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(70, 42, 5, 0.5)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    // Outer bright highlight on top arc
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerRadius - 0.3, -Math.PI * 0.82, -Math.PI * 0.18);
+    ctx.strokeStyle = "rgba(255, 250, 210, 0.75)";
+    ctx.lineWidth = 0.9;
+    ctx.stroke();
+
+    // Inner dark border
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(70, 42, 5, 0.45)";
+    ctx.lineWidth = 0.7;
+    ctx.stroke();
+
+    // Inner bright highlight on bottom arc (torus geometry — light wraps under)
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerRadius + 0.3, Math.PI * 0.18, Math.PI * 0.82);
+    ctx.strokeStyle = "rgba(255, 245, 190, 0.55)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
   }
 
   return { canvas, cssSize };
@@ -241,7 +325,7 @@ const createParticleData = (id: number, glyphIndex: number): ParticleData => {
     restY: yPos,
     vx: 0,
     vy: 0,
-    size: 16 + Math.random() * 14,
+    size: 22 + Math.random() * 34,
     rotation: Math.random() * 360,
     rotationSpeed: (Math.random() - 0.5) * 0.15,
     targetOpacity: 0.3 + Math.random() * 0.5,
@@ -252,7 +336,9 @@ const createParticleData = (id: number, glyphIndex: number): ParticleData => {
     wobbleAmpY: 0.5 + Math.random() * 1.0,
     floatSpeed: FLOAT_SPEED_BASE + (Math.random() - 0.5) * FLOAT_SPEED_VARIANCE,
     glyphIndex,
-    emoji: "",
+
+    tiltPhase: Math.random() * Math.PI * 2,
+    tiltSpeed: 0.008 + Math.random() * 0.012,
 
     entranceProgress: 0,
     entranceDelay: Math.random() * ENTRANCE_STAGGER_WINDOW,
@@ -312,15 +398,13 @@ export const FloatingEmojis = () => {
 
     const dpr = window.devicePixelRatio || 1;
 
-    // Create particles and pre-render their glyphs
+    // Create particles and pre-render their ring glyphs
     const particles: ParticleData[] = [];
     const glyphs: GlyphEntry[] = [];
 
     for (let i = 0; i < particleCount; i++) {
       const data = createParticleData(i, i);
-      const emoji = VIBE_EMOJIS[Math.floor(Math.random() * VIBE_EMOJIS.length)];
-      data.emoji = emoji;
-      const glyph = prerenderGlyph(emoji, data.size, dpr);
+      const glyph = prerenderRing(data.size, dpr);
 
       particles.push(data);
       glyphs.push(glyph);
@@ -452,6 +536,11 @@ export const FloatingEmojis = () => {
         const scale = ENTRANCE_SCALE_START + (1 - ENTRANCE_SCALE_START) * ep;
         const opacity = p.targetOpacity * ep;
 
+        // ── 8b. 3D tilt — oscillating Y-scale simulates axis rotation ──
+        const tiltCos = Math.cos(t * p.tiltSpeed + p.tiltPhase);
+        const tiltScaleY =
+          TILT_MIN_SCALE + (1 - TILT_MIN_SCALE) * Math.abs(tiltCos);
+
         // ── 9. Draw to canvas ──
         // Convert viewport-percentage coordinates to CSS pixels
         const px = (p.x / 100) * w;
@@ -464,7 +553,7 @@ export const FloatingEmojis = () => {
         ctx.globalAlpha = opacity;
         ctx.translate(px, py);
         ctx.rotate(p.rotation * degToRad);
-        ctx.scale(scale, scale);
+        ctx.scale(scale, scale * tiltScaleY);
         ctx.drawImage(
           glyph.canvas,
           -halfSize,
@@ -510,15 +599,14 @@ export const FloatingEmojis = () => {
       const prevDpr = sizeRef.current.dpr;
       syncCanvasSize();
 
-      // If DPR changed (e.g. dragging between monitors), re-render glyphs
-      // using the same emoji each particle was originally assigned.
+      // If DPR changed (e.g. dragging between monitors), re-render ring glyphs.
       const newDpr = sizeRef.current.dpr;
       if (Math.abs(newDpr - prevDpr) > 0.01) {
         const particles = particlesRef.current;
         const glyphs = glyphsRef.current;
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
-          glyphs[p.glyphIndex] = prerenderGlyph(p.emoji, p.size, newDpr);
+          glyphs[p.glyphIndex] = prerenderRing(p.size, newDpr);
         }
         // Reset cached context — buffer resize invalidates it
         ctxRef.current = null;
