@@ -190,28 +190,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           />
         </m.div>
 
-        {/* Sponsors */}
-        <m.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.55 }}
-          className="shrink-0"
-          style={{ marginTop: "clamp(0.5rem, 1vh, 1.25rem)" }}
-        >
-          <p className="text-[10px] sm:text-xs text-white/30 mb-2 sm:mb-3 uppercase tracking-[0.15em] font-medium">
-            Sponsored by
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
-            <Image
-              src="/exa-logo.svg"
-              alt="Exa"
-              width={70}
-              height={21}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
-              onClick={() => window.open("https://exa.ai", "_blank")}
-            />
-          </div>
-        </m.div>
+        {/* Sponsors — hidden for now */}
       </div>
 
       {/* Learn More Dialog */}
