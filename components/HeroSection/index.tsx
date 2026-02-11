@@ -216,41 +216,43 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
 
       {/* Learn More Dialog */}
       <Dialog open={learnMoreOpen} onOpenChange={setLearnMoreOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>How It Works</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg sm:text-2xl">
+              How It Works
+            </DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
               A live tournament-style vibe coding competition. Three rounds, one
               stage, one winner.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-1 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-3 sm:mt-4">
             {FORMAT_ITEMS.map((item) => (
               <div
                 key={item.round}
-                className="bg-white/[0.04] border border-white/10 rounded-xl p-4 text-left"
+                className="bg-white/[0.04] border border-white/10 rounded-xl p-3 sm:p-4 text-left"
               >
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-1 block">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-white/30 mb-1 block">
                   {item.round}
                 </span>
-                <h3 className="text-base font-semibold text-white mb-1">
+                <h3 className="text-sm sm:text-base font-semibold text-white mb-1">
                   {item.title}
                 </h3>
-                <p className="text-sm text-white/40 leading-relaxed">
+                <p className="text-xs sm:text-sm text-white/40 leading-relaxed">
                   {item.description}
                 </p>
               </div>
             ))}
           </div>
-          <div className="mt-4 pt-4 border-t border-white/[0.06] text-center">
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/[0.06] text-center">
             <a
               href="mailto:hello@promptlayer.com"
-              className="text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
+              className="text-xs sm:text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
             >
               Contact us to sponsor or get involved →
             </a>
           </div>
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-3 sm:mt-4">
             <Button variant="secondary" onClick={() => setLearnMoreOpen(false)}>
               Got it
             </Button>
