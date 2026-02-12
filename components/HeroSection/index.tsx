@@ -210,6 +210,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
               onClick={() => window.open("https://exa.ai", "_blank")}
             />
+            <Image
+              src="/cursor-logo.svg"
+              alt="Cursor"
+              width={70}
+              height={21}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
+              onClick={() => window.open("https://cursor.com", "_blank")}
+            />
           </div>
         </m.div>
       </div>
