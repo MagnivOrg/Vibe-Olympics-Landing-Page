@@ -19,14 +19,6 @@ const FloatingEmojis = dynamic(
   { ssr: false, loading: () => null },
 );
 
-const LiquidGlassCursor = dynamic(
-  () =>
-    import("@/components/LiquidGlassCursor").then(
-      (mod) => mod.LiquidGlassCursor,
-    ),
-  { ssr: false, loading: () => null },
-);
-
 interface ClientShellProps {
   children: ReactNode;
 }
@@ -41,8 +33,8 @@ interface ClientShellProps {
  *    Covers the page until hydration + minimum display time completes,
  *    masking any layout shifts or animation stutter.
  *
- * 3. **Deferred decorative layers** — `FloatingEmojis` and `LiquidGlassCursor`
- *    are dynamically imported AND only mounted once the preloader starts its
+ * 3. **Deferred decorative layers** — `FloatingEmojis` is dynamically imported
+ *    and only mounted once the preloader starts its
  *    fade-out (`!isLoading`). This lets them initialise behind the fading
  *    overlay so they're ready by the time the user sees the content — closing
  *    the gap between "preloader gone" and "site fully interactive".
@@ -65,12 +57,7 @@ export const ClientShell = ({ children }: ClientShellProps) => {
       {/* Heavy decorative layers — mount as soon as the preloader starts
           fading out so their initialisation happens behind the overlay.
           By the time the fade completes they're already running. */}
-      {!isLoading && (
-        <>
-          <LiquidGlassCursor />
-          <FloatingEmojis />
-        </>
-      )}
+      {!isLoading && <FloatingEmojis />}
     </LazyMotionProvider>
   );
 };

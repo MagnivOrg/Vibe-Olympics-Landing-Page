@@ -157,28 +157,6 @@
 }
 
 /*
- * Cursor hiding is now managed by LiquidGlassCursor via JS.
- * When the custom cursor mounts it adds `data-custom-cursor` to <html>,
- * which activates these rules. This eliminates the gap where the default
- * cursor was hidden but the custom one hadn't mounted yet.
- */
-@media (hover: hover) and (pointer: fine) {
-    html[data-custom-cursor] * {
-        cursor: none !important;
-    }
-
-    html[data-custom-cursor] a,
-    html[data-custom-cursor] button,
-    html[data-custom-cursor] [role="button"],
-    html[data-custom-cursor] input,
-    html[data-custom-cursor] textarea,
-    html[data-custom-cursor] select,
-    html[data-custom-cursor] [data-interactive] {
-        cursor: none !important;
-    }
-}
-
-/*
  * Mobile-specific touch optimisations.
  * Disable tap highlight and ensure smooth touch scrolling.
  */
