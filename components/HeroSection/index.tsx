@@ -190,12 +190,12 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           />
         </m.div>
 
-        {/* Sponsors */}
+        {/* Sponsors — hidden for now */}
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="shrink-0"
+          className="shrink-0 hidden"
           style={{ marginTop: "clamp(0.5rem, 1vh, 1.25rem)" }}
         >
           <p className="text-[10px] sm:text-xs text-white/30 mb-2 sm:mb-3 uppercase tracking-[0.15em] font-medium">
@@ -209,6 +209,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               height={21}
               className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
               onClick={() => window.open("https://exa.ai", "_blank")}
+            />
+            <Image
+              src="/cursor-logo.svg"
+              alt="Cursor"
+              width={70}
+              height={21}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
+              onClick={() => window.open("https://cursor.com", "_blank")}
             />
           </div>
         </m.div>

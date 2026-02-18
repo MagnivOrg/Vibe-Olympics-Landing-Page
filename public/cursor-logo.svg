@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <!-- Cursor logomark - geometric cube -->
+  <g transform="translate(6, 6) scale(0.1)">
+    <path d="M240 334l149-83.5L240 167l-149 83.5L240 334z" fill="white" opacity="0.6"/>
+    <path d="M389 250.5v-167L240 0v167l149 83.5z" fill="white" opacity="0.4"/>
+    <path d="M240 0L91 83.5v167L240 167V0z" fill="white" opacity="0.5"/>
+    <path d="M389 83.5L240 334V167l149-83.5z" fill="white" opacity="0.85"/>
+    <path d="M389 83.5L240 167 91 83.5h298z" fill="white"/>
+  </g>
+  <!-- cursor text -->
+  <text x="56" y="40" font-family="'Inter', 'Helvetica Neue', system-ui, sans-serif" font-size="32" font-weight="600" fill="white" letter-spacing="-0.5">cursor</text>
+</svg>
