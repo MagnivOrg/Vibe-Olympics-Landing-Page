@@ -204,14 +204,6 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-8">
             <Image
-              src="/mlh-logo.svg"
-              alt="MLH"
-              width={40}
-              height={16}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[55px] sm:h-auto"
-              onClick={() => window.open("https://mlh.io", "_blank")}
-            />
-            <Image
               src="/exa-logo.svg"
               alt="Exa"
               width={50}
@@ -226,6 +218,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               height={18}
               className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
               onClick={() => window.open("https://cursor.com", "_blank")}
+            />
+            <Image
+              src="/mlh-logo.svg"
+              alt="MLH"
+              width={40}
+              height={16}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[55px] sm:h-auto"
+              onClick={() => window.open("https://mlh.io", "_blank")}
             />
           </div>
         </m.div>
