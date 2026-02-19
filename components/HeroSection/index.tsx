@@ -86,8 +86,8 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           className="inline-block shrink-0"
           style={{ marginBottom: "clamp(0.5rem, 1vh, 1.5rem)" }}
         >
-          <div className="inline-flex items-center px-3 py-1.5 sm:px-5 sm:py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
-            <span className="text-xs sm:text-sm font-medium text-white/70 tracking-wide uppercase">
+          <div className="inline-flex items-center px-2.5 py-1 sm:px-5 sm:py-2.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-sm">
+            <span className="text-[10px] sm:text-sm font-medium text-white/70 tracking-wide uppercase">
               {data.badge}
             </span>
           </div>
@@ -115,7 +115,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           style={{ marginBottom: "clamp(0.375rem, 1vh, 1.5rem)" }}
         >
           <p
-            className="text-lg sm:text-4xl italic font-semibold"
+            className="text-base sm:text-4xl italic font-semibold"
             style={{
               background: "linear-gradient(135deg, #0085C7, #F4C300, #DF0024)",
               WebkitBackgroundClip: "text",
@@ -135,7 +135,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           className="shrink-0"
           style={{ marginBottom: "clamp(0.75rem, 2vh, 2.5rem)" }}
         >
-          <p className="text-xs sm:text-lg text-white/50 max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-[10px] sm:text-lg text-white/50 max-w-2xl mx-auto leading-relaxed font-light">
             {data.description}
           </p>
         </m.div>
@@ -150,7 +150,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           <Button
             variant="primary"
             size="lg"
-            className="w-full sm:w-auto min-w-[180px]"
+            className="w-full sm:w-auto min-w-[160px] sm:min-w-[180px]"
             onClick={() =>
               window.open(
                 "https://partiful.com/e/ZgwBhhmfjWTBjqXcs9dS?c=aejCpAmk",
@@ -163,7 +163,7 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           <Button
             variant="secondary"
             size="lg"
-            className="w-full sm:w-auto min-w-[180px]"
+            className="w-full sm:w-auto min-w-[160px] sm:min-w-[180px]"
             onClick={() => setLearnMoreOpen(true)}
           >
             {data.ctaSecondary}
@@ -176,45 +176,54 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
           className="flex items-center justify-center gap-1.5 sm:gap-2 shrink-0"
-          style={{ marginTop: "clamp(0.75rem, 1.5vh, 2rem)" }}
+          style={{ marginTop: "clamp(2rem, 4vh, 4rem)" }}
         >
-          <span className="text-[10px] sm:text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
+          <span className="text-[9px] sm:text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
             Run by
           </span>
           <Image
             src="/promptlayer-logo.svg"
             alt="PromptLayer"
-            width={100}
-            height={14}
-            className="opacity-40 sm:w-[160px] sm:h-[23px]"
+            width={110}
+            height={16}
+            className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[180px] sm:h-[26px]"
+            onClick={() => window.open("https://promptlayer.com", "_blank")}
           />
         </m.div>
 
-        {/* Sponsors — hidden for now */}
+        {/* With Help From */}
         <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="shrink-0 hidden"
-          style={{ marginTop: "clamp(0.5rem, 1vh, 1.25rem)" }}
+          className="shrink-0"
+          style={{ marginTop: "clamp(1.5rem, 3vh, 3rem)" }}
         >
-          <p className="text-[10px] sm:text-xs text-white/30 mb-2 sm:mb-3 uppercase tracking-[0.15em] font-medium">
-            Sponsored by
+          <p className="text-[9px] sm:text-xs text-white/30 mb-1.5 sm:mb-3 uppercase tracking-[0.15em] font-medium">
+            With Help From
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-8">
+            <Image
+              src="/mlh-logo.svg"
+              alt="MLH"
+              width={40}
+              height={16}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[55px] sm:h-auto"
+              onClick={() => window.open("https://mlh.io", "_blank")}
+            />
             <Image
               src="/exa-logo.svg"
               alt="Exa"
-              width={70}
-              height={21}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
+              width={50}
+              height={15}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[80px] sm:h-[24px]"
               onClick={() => window.open("https://exa.ai", "_blank")}
             />
             <Image
               src="/cursor-logo.svg"
               alt="Cursor"
-              width={70}
-              height={21}
+              width={60}
+              height={18}
               className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
               onClick={() => window.open("https://cursor.com", "_blank")}
             />
