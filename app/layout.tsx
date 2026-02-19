@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 import { ClientShell } from "@/components/ClientShell";
 
@@ -71,6 +72,7 @@ export default function RootLayout({
     <html lang="en" className="h-full overflow-hidden">
       <body className="antialiased bg-background text-foreground h-full overflow-hidden">
         <ClientShell>{children}</ClientShell>
+        <Analytics />
       </body>
     </html>
   );
