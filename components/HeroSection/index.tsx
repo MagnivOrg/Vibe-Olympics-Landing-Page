@@ -212,6 +212,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               onClick={() => window.open("https://exa.ai", "_blank")}
             />
             <Image
+              src="/joco-logo.svg"
+              alt="JOCO"
+              width={55}
+              height={16}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[90px] sm:h-[26px]"
+              onClick={() => window.open("https://ridejoco.com", "_blank")}
+            />
+            <Image
               src="/cursor-logo.svg"
               alt="Cursor"
               width={60}
