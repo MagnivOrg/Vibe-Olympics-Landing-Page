@@ -178,15 +178,15 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           className="flex items-center justify-center gap-1.5 sm:gap-2 shrink-0"
           style={{ marginTop: "clamp(2rem, 4vh, 4rem)" }}
         >
-          <span className="text-[9px] sm:text-xs text-white/30 uppercase tracking-[0.15em] font-medium">
+          <span className="text-[11px] sm:text-sm text-white/30 uppercase tracking-[0.15em] font-medium">
             Run by
           </span>
           <Image
             src="/promptlayer-logo.svg"
             alt="PromptLayer"
-            width={110}
-            height={16}
-            className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[180px] sm:h-[26px]"
+            width={132}
+            height={19}
+            className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[216px] sm:h-[31px]"
             onClick={() => window.open("https://promptlayer.com", "_blank")}
           />
         </m.div>
@@ -204,12 +204,12 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-8">
             <Image
-              src="/exa-logo.svg"
-              alt="Exa"
-              width={50}
-              height={15}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[80px] sm:h-[24px]"
-              onClick={() => window.open("https://exa.ai", "_blank")}
+              src="/mlh-logo.svg"
+              alt="MLH"
+              width={40}
+              height={16}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[55px] sm:h-auto"
+              onClick={() => window.open("https://mlh.io", "_blank")}
             />
             <Image
               src="/joco-logo.svg"
@@ -228,12 +228,12 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               onClick={() => window.open("https://cursor.com", "_blank")}
             />
             <Image
-              src="/mlh-logo.svg"
-              alt="MLH"
-              width={40}
-              height={16}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[55px] sm:h-auto"
-              onClick={() => window.open("https://mlh.io", "_blank")}
+              src="/exa-logo.svg"
+              alt="Exa"
+              width={50}
+              height={15}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[80px] sm:h-[24px]"
+              onClick={() => window.open("https://exa.ai", "_blank")}
             />
           </div>
         </m.div>
