@@ -4,6 +4,7 @@ import { m } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 
+import { SponsorCarousel } from "@/components/HeroSection/SponsorCarousel";
 import { useIsTouchDevice } from "@/components/hooks/useIsTouchDevice";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/button";
@@ -196,54 +197,10 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="shrink-0"
+          className="shrink-0 w-full"
           style={{ marginTop: "clamp(1.5rem, 3vh, 3rem)" }}
         >
-          <p className="text-[9px] sm:text-xs text-white/30 mb-1.5 sm:mb-3 uppercase tracking-[0.15em] font-medium">
-            With Help From
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-8">
-            <Image
-              src="/mlh-logo.svg"
-              alt="MLH"
-              width={40}
-              height={16}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[55px] sm:h-auto"
-              onClick={() => window.open("https://mlh.io", "_blank")}
-            />
-            <Image
-              src="/joco-logo.svg"
-              alt="JOCO"
-              width={55}
-              height={16}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[90px] sm:h-[26px]"
-              onClick={() => window.open("https://ridejoco.com", "_blank")}
-            />
-            <Image
-              src="/cursor-logo.svg"
-              alt="Cursor"
-              width={60}
-              height={18}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[30px]"
-              onClick={() => window.open("https://cursor.com", "_blank")}
-            />
-            <Image
-              src="/exa-logo.svg"
-              alt="Exa"
-              width={50}
-              height={15}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[80px] sm:h-[24px]"
-              onClick={() => window.open("https://exa.ai", "_blank")}
-            />
-            <Image
-              src="/endex-logo.svg"
-              alt="Endex"
-              width={60}
-              height={14}
-              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[100px] sm:h-[24px]"
-              onClick={() => window.open("https://endex.ai", "_blank")}
-            />
-          </div>
+          <SponsorCarousel />
         </m.div>
       </div>
 
