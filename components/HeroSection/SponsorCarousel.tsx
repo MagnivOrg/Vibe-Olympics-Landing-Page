@@ -61,7 +61,7 @@ const SPEED = 0.35;
 const SponsorItem = ({ sponsor }: { sponsor: Sponsor }) => (
   <button
     onClick={() => window.open(sponsor.url, "_blank")}
-    className="flex-shrink-0 px-4 sm:px-7 flex items-center justify-center cursor-pointer opacity-40 hover:opacity-80 transition-opacity duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded"
+    className="flex-shrink-0 px-4 sm:px-7 flex items-center justify-center cursor-pointer opacity-50 hover:opacity-90 transition-opacity duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded"
     aria-label={`Visit ${sponsor.alt}`}
   >
     <Image
@@ -117,24 +117,73 @@ export const SponsorCarousel = () => {
       <p className="text-[9px] sm:text-xs text-white/30 mb-2 sm:mb-3 uppercase tracking-[0.15em] font-medium text-center">
         With Help From
       </p>
+
+      {/* Glass bubble container */}
       <div
         ref={containerRef}
-        className="relative overflow-hidden"
+        className="relative rounded-2xl bg-white/[0.03] border border-white/[0.07] overflow-hidden"
+        style={{
+          backdropFilter: "blur(2px)",
+          WebkitBackdropFilter: "blur(2px)",
+          boxShadow:
+            "0 0 20px rgba(255,255,255,0.02), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(255,255,255,0.02)",
+        }}
         onMouseEnter={handlePause}
         onMouseLeave={handleResume}
         onTouchStart={handlePause}
         onTouchEnd={handleResume}
       >
-        <m.div ref={innerRef} className="flex items-center py-1" style={{ x }}>
-          {sponsorSets.map((setIndex) =>
-            SPONSORS.map((sponsor, i) => (
-              <SponsorItem
-                key={`${setIndex}-${sponsor.alt}-${i}`}
-                sponsor={sponsor}
-              />
-            )),
-          )}
-        </m.div>
+        {/* Left distortion zone — blurs content as it exits */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-14 sm:w-20 z-10 pointer-events-none"
+          style={{
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            maskImage: "linear-gradient(to right, black 0%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, black 0%, transparent 100%)",
+          }}
+        />
+
+        {/* Right distortion zone — blurs content as it exits */}
+        <div
+          className="absolute right-0 top-0 bottom-0 w-14 sm:w-20 z-10 pointer-events-none"
+          style={{
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            maskImage: "linear-gradient(to left, black 0%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to left, black 0%, transparent 100%)",
+          }}
+        />
+
+        {/* Opacity fade mask on the scrolling content */}
+        <div
+          style={{
+            maskImage:
+              "linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%)",
+          }}
+        >
+          <m.div
+            ref={innerRef}
+            className="flex items-center py-3 sm:py-4"
+            style={{ x }}
+          >
+            {sponsorSets.map((setIndex) =>
+              SPONSORS.map((sponsor, i) => (
+                <SponsorItem
+                  key={`${setIndex}-${sponsor.alt}-${i}`}
+                  sponsor={sponsor}
+                />
+              )),
+            )}
+          </m.div>
+        </div>
+
+        {/* Subtle inner highlight along the top edge */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent pointer-events-none" />
       </div>
     </div>
   );
