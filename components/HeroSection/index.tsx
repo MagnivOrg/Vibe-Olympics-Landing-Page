@@ -235,6 +235,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
               className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[80px] sm:h-[24px]"
               onClick={() => window.open("https://exa.ai", "_blank")}
             />
+            <Image
+              src="/endex-logo.svg"
+              alt="Endex"
+              width={60}
+              height={15}
+              className="opacity-40 hover:opacity-70 transition-opacity duration-300 cursor-pointer sm:w-[95px] sm:h-[24px]"
+              onClick={() => window.open("https://endex.ai", "_blank")}
+            />
           </div>
         </m.div>
       </div>
