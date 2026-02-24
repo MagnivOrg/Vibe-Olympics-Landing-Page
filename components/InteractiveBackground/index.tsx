@@ -45,7 +45,13 @@ function loadYouTubeApi(): Promise<void> {
   return ytApiPromise;
 }
 
-const YouTubeBackground = ({ isMounted }: { isMounted: boolean }) => {
+const YouTubeBackground = ({
+  isMounted,
+  isTouch,
+}: {
+  isMounted: boolean;
+  isTouch: boolean | null;
+}) => {
   const playerRef = useRef<YT.Player | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -65,22 +71,62 @@ const YouTubeBackground = ({ isMounted }: { isMounted: boolean }) => {
             if (cancelled) return;
             playerRef.current = player;
 
-            // Poll current time to loop 20s before end
-            intervalRef.current = setInterval(() => {
-              try {
-                if (!playerRef.current) return;
-                const duration = playerRef.current.getDuration();
-                const currentTime = playerRef.current.getCurrentTime();
-                if (
-                  duration > 0 &&
-                  currentTime >= duration - LOOP_BEFORE_END_SECONDS
-                ) {
-                  playerRef.current.seekTo(0, true);
+            // Explicitly mute and play — some mobile browsers require the
+            // API call in addition to the URL parameter for autoplay to work.
+            try {
+              player.mute();
+              player.playVideo();
+            } catch {
+              // Player may not support these calls yet
+            }
+
+            // On desktop (non-touch), poll current time and seek back before
+            // the end for a seamless loop. On mobile/touch we skip this
+            // because seekTo() can freeze the player; instead we rely on the
+            // native loop=1 parameter and the onStateChange ENDED handler.
+            if (!isTouch) {
+              intervalRef.current = setInterval(() => {
+                try {
+                  if (!playerRef.current) return;
+                  const duration = playerRef.current.getDuration();
+                  const currentTime = playerRef.current.getCurrentTime();
+                  if (
+                    duration > 0 &&
+                    currentTime >= duration - LOOP_BEFORE_END_SECONDS
+                  ) {
+                    playerRef.current.seekTo(0, true);
+                  }
+                } catch {
+                  // Player might not be ready yet
                 }
+              }, TIME_CHECK_INTERVAL_MS);
+            }
+          },
+
+          onStateChange: (event: YT.OnStateChangeEvent) => {
+            if (cancelled) return;
+
+            // YT.PlayerState.ENDED === 0
+            // YT.PlayerState.PAUSED === 2
+            // If the video ends or gets paused unexpectedly (common on
+            // mobile when the browser throttles iframes or after a seekTo),
+            // restart playback from the beginning.
+            if (event.data === YT.PlayerState.ENDED) {
+              try {
+                player.seekTo(0, true);
+                player.playVideo();
               } catch {
-                // Player might not be ready yet
+                // Silently handle — player may have been destroyed
               }
-            }, TIME_CHECK_INTERVAL_MS);
+            } else if (event.data === YT.PlayerState.PAUSED) {
+              // On mobile, the browser can pause the video for power-saving
+              // or when the tab becomes visible again. Resume playback.
+              try {
+                player.playVideo();
+              } catch {
+                // Silently handle
+              }
+            }
           },
         },
       });
@@ -93,7 +139,7 @@ const YouTubeBackground = ({ isMounted }: { isMounted: boolean }) => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       playerRef.current = null;
     };
-  }, [isMounted]);
+  }, [isMounted, isTouch]);
 
   return (
     <div
@@ -208,7 +254,7 @@ export const InteractiveBackground = () => {
       style={{ isolation: "isolate", contain: "layout style paint" }}
     >
       {/* YouTube video background — rendered only after mount to avoid hydration mismatch */}
-      <YouTubeBackground isMounted={isMounted} />
+      <YouTubeBackground isMounted={isMounted} isTouch={isTouch} />
 
       {/* Base grid background */}
       <div className="absolute inset-0 grid-bg opacity-20" />
