@@ -36,7 +36,7 @@ const FORMAT_ITEMS = [
     round: "Round 1",
     title: "The Qualifier",
     description:
-      "All competitors get the same prompt. Build as fast as you can. Top builders advance.",
+      "Starts at 6:30pm sharp. All competitors get the same prompt. Build as fast as you can. Top builders advance.",
   },
   {
     round: "Round 2",
@@ -211,11 +211,14 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
             <DialogTitle className="text-lg sm:text-2xl">
               How It Works
             </DialogTitle>
-            <DialogDescription className="text-sm sm:text-base">
-              A live tournament-style vibe coding competition. Three rounds, one
-              stage, one winner.
+            <DialogDescription className="sr-only">
+              Event format details
             </DialogDescription>
           </DialogHeader>
+          <p className="text-xs sm:text-sm text-white/50 mt-2">
+            Doors open at 6pm. The first round starts at 6:30pm sharp — if
+            you&apos;re competing, show up early to set up your workstation.
+          </p>
           <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-3 sm:mt-4">
             {FORMAT_ITEMS.map((item) => (
               <div
@@ -233,6 +236,23 @@ export const HeroSection = ({ data }: HeroSectionProps) => {
                 </p>
               </div>
             ))}
+          </div>
+          {/* Prizes */}
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/[0.06]">
+            <h3 className="text-sm sm:text-base font-semibold text-white mb-2">
+              Prizes
+            </h3>
+            <div className="flex flex-col gap-1.5 text-xs sm:text-sm text-white/50">
+              <p>
+                <span className="text-white/70">1st Place:</span> Mac Mini
+              </p>
+              <p>
+                <span className="text-white/70">Runner-up:</span> Raspberry Pi
+              </p>
+              <p className="text-white/30 text-[10px] sm:text-xs mt-1">
+                More prizes to be announced from our sponsors.
+              </p>
+            </div>
           </div>
           <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/[0.06] text-center">
             <a
